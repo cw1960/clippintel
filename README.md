@@ -1,69 +1,98 @@
-# React + TypeScript + Vite
+# Clipp Intelligence
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An intelligent opportunity monitoring platform built with React, TypeScript, and Mantine UI.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎯 **Smart Opportunity Matching** - AI-powered matching of opportunities to user criteria
+- 📊 **Real-time Dashboard** - Monitor opportunities and analytics in real-time
+- 🔔 **Smart Notifications** - Get notified about relevant opportunities instantly
+- 🎨 **Modern UI** - Beautiful dark theme with Mantine components
+- 🔐 **Secure Authentication** - User authentication with Supabase
+- ⚡ **Fast Performance** - Built with Vite for lightning-fast development
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI Library**: Mantine v7 with dark theme
+- **State Management**: Zustand
+- **Routing**: React Router v6
+- **Backend**: Supabase
+- **Styling**: Emotion CSS-in-JS
+- **Icons**: Tabler Icons
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/cw1960/clippintel.git
+cd clippintel
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+```bash
+npm install
 ```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env
+```
+Edit `.env` with your Supabase credentials.
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`
+
+## Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── auth/           # Authentication components
+│   ├── dashboard/      # Dashboard components
+│   ├── criteria/       # Criteria management
+│   ├── notifications/  # Notification components
+│   └── layout/         # Layout components
+├── services/           # API services
+│   ├── supabase.ts     # Supabase client
+│   ├── whopApi.ts      # Whop API integration
+│   └── rateLimiter.ts  # Rate limiting service
+├── stores/             # Zustand stores
+│   ├── authStore.ts    # Authentication state
+│   ├── opportunityStore.ts # Opportunity management
+│   └── settingsStore.ts # User settings
+├── types/              # TypeScript type definitions
+│   ├── opportunity.ts  # Opportunity types
+│   ├── user.ts         # User types
+│   └── notification.ts # Notification types
+├── utils/              # Utility functions
+│   ├── matching.ts     # Opportunity matching logic
+│   ├── formatting.ts   # Data formatting helpers
+│   └── validation.ts   # Form validation
+├── App.tsx             # Main app component
+├── main.tsx            # App entry point
+└── theme.ts            # Mantine theme configuration
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and ensure code quality
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
