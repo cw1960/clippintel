@@ -10,6 +10,8 @@ import {
   Button,
   Badge,
   Progress,
+  Loader,
+  Center,
 } from "@mantine/core";
 import {
   IconDashboard,
@@ -26,8 +28,15 @@ export const DashboardPage: React.FC = () => {
   const { setActiveItem } = useActiveNavItem
     ? useActiveNavItem()
     : { setActiveItem: () => {} };
-  // Removed unused: const { user, profile, signOut } = useAuth ? useAuth() : { user: null, profile: null, signOut: async () => {} };
-  const { signOut } = useAuth ? useAuth() : { signOut: async () => {} };
+  const { profile, isLoading, isInitialized, error, signOut } = useAuth
+    ? useAuth()
+    : {
+        profile: null,
+        isLoading: false,
+        isInitialized: false,
+        error: null,
+        signOut: async () => {},
+      };
 
   useEffect(() => {
     if (setActiveItem) setActiveItem("dashboard");
@@ -36,6 +45,58 @@ export const DashboardPage: React.FC = () => {
   const handleLogout = async () => {
     if (signOut) await signOut();
   };
+
+  // Robust guards for loading, error, and null/malformed profile
+  if (!isInitialized || isLoading) {
+    return (
+      <Center style={{ minHeight: "60vh" }}>
+        <Loader size="lg" color="blue" />
+      </Center>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Error
+            </Title>
+            <Text c="dimmed" size="lg">
+              {typeof error === "string"
+                ? error
+                : "Failed to load profile. Please try again or contact support."}
+            </Text>
+            <Button onClick={handleLogout} color="red">
+              Sign Out
+            </Button>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
+
+  if (!profile || !profile.id || !profile.email) {
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Profile Not Found
+            </Title>
+            <Text c="dimmed" size="lg">
+              Your profile could not be loaded or is incomplete. Please sign out
+              and try again, or contact support if the issue persists.
+            </Text>
+            <Button onClick={handleLogout} color="red">
+              Sign Out
+            </Button>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
 
   return (
     <Container size="xl">
