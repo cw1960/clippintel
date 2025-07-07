@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { User, Session } from "@supabase/supabase-js";
-import type { UserProfile } from "../types/user";
+import type { Profile } from "../types/user";
 
 // Supabase configuration with provided credentials
 const SUPABASE_URL =
@@ -66,11 +66,10 @@ export const authHelpers = {
 
       // Create user profile if signup successful
       if (data.user && !error) {
-        await supabase.from("user_profiles").insert({
+        await supabase.from("profiles").insert({
           id: data.user.id,
           email: data.user.email,
           full_name: userData?.full_name || "",
-          role: "user",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         });
@@ -196,41 +195,31 @@ export const dbHelpers = {
    */
   async getUserProfile(
     userId: string,
-  ): Promise<{ data: UserProfile | null; error: any }> {
+  ): Promise<{ data: Profile | null; error: any }> {
     try {
       const { data, error } = await supabase
-        .from("user_profiles")
+        .from("profiles")
         .select("*")
         .eq("id", userId)
         .single();
-
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error("Get user profile error:", error);
       return { data: null, error };
     }
   },
 
-  /**
-   * Update user profile
-   */
-  async updateUserProfile(userId: string, updates: Partial<UserProfile>) {
+  async updateUserProfile(userId: string, updates: Partial<Profile>) {
     try {
       const { data, error } = await supabase
-        .from("user_profiles")
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        .from("profiles")
+        .update({ ...updates, updated_at: new Date().toISOString() })
         .eq("id", userId)
         .select()
         .single();
-
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error("Update user profile error:", error);
       return { data: null, error };
     }
   },

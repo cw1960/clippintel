@@ -194,3 +194,23 @@ export interface OpportunityTemplate {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// Supabase: opportunities table
+export interface SupabaseOpportunity {
+  id: string;
+  whop_id: string;
+  title: string;
+  description?: string;
+  payout?: number;
+  category?: string;
+  content_type?: string;
+  brand?: string;
+  requirements?: any; // JSONB
+  difficulty_level?: number;
+  estimated_hours?: number;
+  deadline?: string;
+  discovered_at: string;
+  expires_at?: string;
+  is_active: boolean;
+  raw_data?: any; // JSONB
+}

@@ -203,6 +203,85 @@ export interface UserCriteria {
   match_count: number;
 }
 
+// Supabase: profiles table
+export interface Profile {
+  id: string; // UUID
+  email: string;
+  full_name?: string;
+  whop_username?: string;
+  created_at: string;
+  updated_at: string;
+  subscription_tier: 'free' | 'premium';
+  onboarding_completed: boolean;
+  last_active_at: string;
+}
+
+// Supabase: user_criteria table
+export interface UserCriteria {
+  id: string;
+  user_id: string;
+  min_payout: number;
+  max_payout?: number;
+  content_types: string[];
+  categories: string[];
+  excluded_brands: string[];
+  excluded_keywords: string[];
+  included_keywords: string[];
+  max_difficulty: number;
+  availability_hours: number;
+  preferred_deadlines: number;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
+
+// Supabase: notification_preferences table
+export interface NotificationPreferences {
+  id: string;
+  user_id: string;
+  email_enabled: boolean;
+  telegram_enabled: boolean;
+  telegram_chat_id?: string;
+  discord_enabled: boolean;
+  discord_webhook_url?: string;
+  slack_enabled: boolean;
+  slack_webhook_url?: string;
+  frequency: 'instant' | 'hourly' | 'daily';
+  min_match_score: number;
+  quiet_hours_start?: string; // TIME
+  quiet_hours_end?: string; // TIME
+  created_at: string;
+  updated_at: string;
+}
+
+// Supabase: user_matches table
+export interface UserMatch {
+  id: string;
+  user_id: string;
+  opportunity_id: string;
+  match_score: number;
+  ai_reasoning?: string;
+  notified_at?: string;
+  viewed_at?: string;
+  applied_at?: string;
+  dismissed_at?: string;
+  status: 'pending' | 'viewed' | 'applied' | 'dismissed';
+  created_at: string;
+}
+
+// Supabase: notification_history table
+export interface NotificationHistory {
+  id: string;
+  user_id: string;
+  opportunity_id: string;
+  channel: string; // 'email', 'telegram', 'discord', 'slack'
+  status: 'sent' | 'delivered' | 'failed' | 'clicked';
+  sent_at: string;
+  delivered_at?: string;
+  clicked_at?: string;
+  error_message?: string;
+}
+
 // Team and Collaboration Types
 export interface Team {
   id: string;
