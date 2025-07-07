@@ -13,6 +13,8 @@ import {
   Select,
   PasswordInput,
   Textarea,
+  Loader,
+  Center,
 } from "@mantine/core";
 import {
   IconSettings,
@@ -23,13 +25,63 @@ import {
 } from "@tabler/icons-react";
 import { useActiveNavItem } from "../stores/layoutStore";
 import { useEffect } from "react";
+import { useAuth } from "../components/auth";
 
 export const SettingsPage: React.FC = () => {
   const { setActiveItem } = useActiveNavItem();
+  const { profile, isLoading, isInitialized, error } = useAuth
+    ? useAuth()
+    : { profile: null, isLoading: false, isInitialized: false, error: null };
 
   useEffect(() => {
     setActiveItem("settings");
   }, [setActiveItem]);
+
+  // Bulletproof guards for loading, error, and null/malformed profile
+  if (!isInitialized || isLoading) {
+    return (
+      <Center style={{ minHeight: "60vh" }}>
+        <Loader size="lg" color="blue" />
+      </Center>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Error
+            </Title>
+            <Text c="dimmed" size="lg">
+              {typeof error === "string"
+                ? error
+                : "Failed to load profile. Please try again or contact support."}
+            </Text>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
+
+  if (!profile || !profile.id || !profile.email) {
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Profile Not Found
+            </Title>
+            <Text c="dimmed" size="lg">
+              Your profile could not be loaded or is incomplete. Please sign out
+              and try again, or contact support if the issue persists.
+            </Text>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
 
   return (
     <Container size="xl">
