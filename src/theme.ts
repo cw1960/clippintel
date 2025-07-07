@@ -1,7 +1,6 @@
 import { createTheme } from "@mantine/core";
 
 export const theme = createTheme({
-  colorScheme: "dark",
   primaryColor: "blue",
   fontFamily:
     "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",

@@ -36,7 +36,7 @@ interface OpportunityState {
   clearFilters: () => void;
 }
 
-export const useOpportunityStore = create<OpportunityState>((set, get) => ({
+export const useOpportunityStore = create<OpportunityState>((set) => ({
   opportunities: [],
   isLoading: false,
   error: null,
