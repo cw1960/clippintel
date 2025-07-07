@@ -1,28 +1,29 @@
-import { 
-  AppShell as MantineAppShell, 
-  Burger, 
+import {
+  AppShell as MantineAppShell,
+  Burger,
   useMatches,
   Box,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { Header } from './Header';
-import { Navbar } from './Navbar';
-import { useNavbarState } from '../../stores/layoutStore';
-import type { AppShellProps } from '../../types/layout';
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { Header } from "./Header";
+import { Navbar } from "./Navbar";
+import { useNavbarState } from "../../stores/layoutStore";
+import type { AppShellProps } from "../../types/layout";
 
-export const AppShell: React.FC<AppShellProps> = ({ 
+export const AppShell: React.FC<AppShellProps> = ({
   children,
   navbar = {
     width: { base: 280, sm: 300, lg: 320 },
-    breakpoint: 'sm',
+    breakpoint: "sm",
   },
   header = {
     height: { base: 60, sm: 70 },
   },
-  padding = 'md',
+  padding = "md",
 }) => {
   const { opened, toggle, close } = useNavbarState();
-  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] = useDisclosure();
+  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] =
+    useDisclosure();
 
   const isMobile = useMatches({
     base: true,
@@ -49,9 +50,9 @@ export const AppShell: React.FC<AppShellProps> = ({
       {/* Header */}
       <MantineAppShell.Header
         style={{
-          borderBottom: '1px solid var(--mantine-color-default-border)',
-          backgroundColor: 'var(--mantine-color-body)',
-          backdropFilter: 'blur(10px)',
+          borderBottom: "1px solid var(--mantine-color-default-border)",
+          backgroundColor: "var(--mantine-color-body)",
+          backdropFilter: "blur(10px)",
         }}
       >
         <Header
@@ -73,30 +74,27 @@ export const AppShell: React.FC<AppShellProps> = ({
       {/* Navbar */}
       <MantineAppShell.Navbar
         style={{
-          backgroundColor: 'var(--mantine-color-body)',
-          borderRight: '1px solid var(--mantine-color-default-border)',
+          backgroundColor: "var(--mantine-color-body)",
+          borderRight: "1px solid var(--mantine-color-default-border)",
         }}
       >
-        <Navbar
-          opened={navbarOpened}
-          onClose={closeNavbar}
-        />
+        <Navbar opened={navbarOpened} onClose={closeNavbar} />
       </MantineAppShell.Navbar>
 
       {/* Main Content */}
       <MantineAppShell.Main
         style={{
-          backgroundColor: 'var(--mantine-color-default-color)',
-          minHeight: 'calc(100vh - var(--app-shell-header-height))',
-          paddingTop: 'var(--mantine-spacing-md)',
-          paddingBottom: 'var(--mantine-spacing-md)',
+          backgroundColor: "var(--mantine-color-default-color)",
+          minHeight: "calc(100vh - var(--app-shell-header-height))",
+          paddingTop: "var(--mantine-spacing-md)",
+          paddingBottom: "var(--mantine-spacing-md)",
         }}
       >
         <Box
           style={{
-            maxWidth: '100%',
-            margin: '0 auto',
-            padding: '0 var(--mantine-spacing-md)',
+            maxWidth: "100%",
+            margin: "0 auto",
+            padding: "0 var(--mantine-spacing-md)",
           }}
         >
           {children}
@@ -104,4 +102,4 @@ export const AppShell: React.FC<AppShellProps> = ({
       </MantineAppShell.Main>
     </MantineAppShell>
   );
-}; 
+};

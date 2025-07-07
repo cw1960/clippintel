@@ -1,30 +1,26 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { authHelpers, dbHelpers, supabaseUtils } from '../services/supabase';
-import type {
-  AuthStore,
-  UserProfile,
-  UserPreferences
-} from '../types/user';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { authHelpers, dbHelpers, supabaseUtils } from "../services/supabase";
+import type { AuthStore, UserProfile, UserPreferences } from "../types/user";
 
 // Helper function to safely extract error messages
 const getErrorMessage = (error: any): string => {
-  if (typeof error === 'string') return error;
+  if (typeof error === "string") return error;
   if (error?.message) return error.message;
-  return 'An unexpected error occurred';
+  return "An unexpected error occurred";
 };
 
 // Default user preferences
 const DEFAULT_PREFERENCES: UserPreferences = {
-  theme: 'dark',
-  language: 'en',
+  theme: "dark",
+  language: "en",
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  date_format: 'MM/DD/YYYY',
-  time_format: '12h',
-  currency: 'USD',
+  date_format: "MM/DD/YYYY",
+  time_format: "12h",
+  currency: "USD",
   notifications: {
     email_enabled: true,
-    email_frequency: 'daily',
+    email_frequency: "daily",
     email_types: {
       new_opportunities: true,
       opportunity_updates: true,
@@ -55,15 +51,15 @@ const DEFAULT_PREFERENCES: UserPreferences = {
     },
     quiet_hours: {
       enabled: false,
-      start_time: '22:00',
-      end_time: '08:00',
+      start_time: "22:00",
+      end_time: "08:00",
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
-    preferred_channels: ['email', 'in_app'],
+    preferred_channels: ["email", "in_app"],
   },
   features: {
     dashboard: {
-      default_view: 'grid',
+      default_view: "grid",
       items_per_page: 20,
       auto_refresh: true,
       refresh_interval: 300,
@@ -75,7 +71,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
       match_threshold: 75,
       auto_apply: false,
       auto_save: true,
-      default_sort: 'newest',
+      default_sort: "newest",
       default_filters: [],
       show_expired: false,
     },
@@ -92,10 +88,10 @@ const DEFAULT_PREFERENCES: UserPreferences = {
     },
   },
   privacy: {
-    profile_visibility: 'private',
-    activity_visibility: 'private',
+    profile_visibility: "private",
+    activity_visibility: "private",
     search_visibility: false,
-    data_retention: 'auto',
+    data_retention: "auto",
     third_party_integrations: false,
     analytics_tracking: false,
     marketing_communications: false,
@@ -114,107 +110,115 @@ export const useAuthStore = create<AuthStore>()(
       error: null,
 
       // Authentication Actions
-      signUp: async (email: string, password: string, userData?: { full_name?: string }) => {
+      signUp: async (
+        email: string,
+        password: string,
+        userData?: { full_name?: string },
+      ) => {
         set({ loading: true, error: null });
-        
+
         try {
-          const { data, error } = await authHelpers.signUp(email, password, userData);
-          
+          const { data, error } = await authHelpers.signUp(
+            email,
+            password,
+            userData,
+          );
+
           if (error) {
             set({ error: getErrorMessage(error), loading: false });
             return { success: false, error };
           }
 
           if (data?.user && data?.session) {
-            set({ 
-              user: data.user, 
-              session: data.session, 
+            set({
+              user: data.user,
+              session: data.session,
               loading: false,
-              error: null 
+              error: null,
             });
 
             // Load user profile
             await get().loadUserProfile();
-            
+
             return { success: true };
           }
 
           set({ loading: false });
-          return { success: false, error: 'No user data returned' };
+          return { success: false, error: "No user data returned" };
         } catch (error) {
-          console.error('Sign up error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Sign up error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
 
       signIn: async (email: string, password: string) => {
         set({ loading: true, error: null });
-        
+
         try {
           const { data, error } = await authHelpers.signIn(email, password);
-          
+
           if (error) {
             set({ error: getErrorMessage(error), loading: false });
             return { success: false, error };
           }
 
           if (data?.user && data?.session) {
-            set({ 
-              user: data.user, 
-              session: data.session, 
+            set({
+              user: data.user,
+              session: data.session,
               loading: false,
-              error: null 
+              error: null,
             });
 
             // Load user profile
             await get().loadUserProfile();
-            
+
             return { success: true };
           }
 
           set({ loading: false });
-          return { success: false, error: 'Invalid credentials' };
+          return { success: false, error: "Invalid credentials" };
         } catch (error) {
-          console.error('Sign in error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Sign in error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
 
       signOut: async () => {
         set({ loading: true, error: null });
-        
+
         try {
           const { error } = await authHelpers.signOut();
-          
+
           if (error) {
             set({ error: getErrorMessage(error), loading: false });
             return { success: false, error };
           }
 
-          set({ 
-            user: null, 
-            profile: null, 
-            session: null, 
+          set({
+            user: null,
+            profile: null,
+            session: null,
             loading: false,
-            error: null 
+            error: null,
           });
-          
+
           return { success: true };
         } catch (error) {
-          console.error('Sign out error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Sign out error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
 
       resetPassword: async (email: string) => {
         set({ loading: true, error: null });
-        
+
         try {
           const { error } = await authHelpers.resetPassword(email);
-          
+
           if (error) {
             set({ error: getErrorMessage(error), loading: false });
             return { success: false, error };
@@ -223,18 +227,18 @@ export const useAuthStore = create<AuthStore>()(
           set({ loading: false });
           return { success: true };
         } catch (error) {
-          console.error('Reset password error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Reset password error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
 
       updatePassword: async (password: string) => {
         set({ loading: true, error: null });
-        
+
         try {
           const { error } = await authHelpers.updatePassword(password);
-          
+
           if (error) {
             set({ error: getErrorMessage(error), loading: false });
             return { success: false, error };
@@ -243,8 +247,8 @@ export const useAuthStore = create<AuthStore>()(
           set({ loading: false });
           return { success: true };
         } catch (error) {
-          console.error('Update password error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Update password error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
@@ -252,13 +256,16 @@ export const useAuthStore = create<AuthStore>()(
       // Profile Management
       updateProfile: async (updates: Partial<UserProfile>) => {
         const { user } = get();
-        if (!user) return { success: false, error: 'Not authenticated' };
+        if (!user) return { success: false, error: "Not authenticated" };
 
         set({ loading: true, error: null });
-        
+
         try {
-          const { data, error } = await dbHelpers.updateUserProfile(user.id, updates);
-          
+          const { data, error } = await dbHelpers.updateUserProfile(
+            user.id,
+            updates,
+          );
+
           if (error) {
             set({ error: getErrorMessage(error), loading: false });
             return { success: false, error };
@@ -270,40 +277,42 @@ export const useAuthStore = create<AuthStore>()(
           }
 
           set({ loading: false });
-          return { success: false, error: 'No profile data returned' };
+          return { success: false, error: "No profile data returned" };
         } catch (error) {
-          console.error('Update profile error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Update profile error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
 
       uploadAvatar: async (file: File) => {
         const { user } = get();
-        if (!user) return { success: false, error: 'Not authenticated' };
+        if (!user) return { success: false, error: "Not authenticated" };
 
         set({ loading: true, error: null });
-        
+
         try {
           // Upload file to Supabase storage
           const fileName = `avatars/${user.id}/${Date.now()}-${file.name}`;
-          const { data: uploadData, error: uploadError } = await supabaseUtils.uploadFile(
-            'avatars', 
-            fileName, 
-            file
+          const { error: uploadError } = await supabaseUtils.uploadFile(
+            "avatars",
+            fileName,
+            file,
           );
-          
+
           if (uploadError) {
             set({ error: getErrorMessage(uploadError), loading: false });
             return { success: false, error: uploadError };
           }
 
           // Get public URL
-          const avatarUrl = supabaseUtils.getPublicUrl('avatars', fileName);
-          
+          const avatarUrl = supabaseUtils.getPublicUrl("avatars", fileName);
+
           // Update profile with new avatar URL
-          const updateResult = await get().updateProfile({ avatar_url: avatarUrl });
-          
+          const updateResult = await get().updateProfile({
+            avatar_url: avatarUrl,
+          });
+
           if (updateResult.success) {
             set({ loading: false });
             return { success: true, url: avatarUrl };
@@ -311,28 +320,33 @@ export const useAuthStore = create<AuthStore>()(
 
           return updateResult;
         } catch (error) {
-          console.error('Upload avatar error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Upload avatar error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
 
       deleteAccount: async () => {
         const { user } = get();
-        if (!user) return { success: false, error: 'Not authenticated' };
+        if (!user) return { success: false, error: "Not authenticated" };
 
         set({ loading: true, error: null });
-        
+
         try {
           // Note: This would need to be implemented on the server side
           // as Supabase doesn't provide direct user deletion from client
-          console.warn('Account deletion not implemented - requires server-side logic');
-          
+          console.warn(
+            "Account deletion not implemented - requires server-side logic",
+          );
+
           set({ loading: false });
-          return { success: false, error: 'Account deletion not available from client' };
+          return {
+            success: false,
+            error: "Account deletion not available from client",
+          };
         } catch (error) {
-          console.error('Delete account error:', error);
-          set({ error: 'An unexpected error occurred', loading: false });
+          console.error("Delete account error:", error);
+          set({ error: "An unexpected error occurred", loading: false });
           return { success: false, error };
         }
       },
@@ -340,12 +354,12 @@ export const useAuthStore = create<AuthStore>()(
       // Preferences
       updatePreferences: async (preferences: Partial<UserPreferences>) => {
         const { profile } = get();
-        if (!profile) return { success: false, error: 'No profile found' };
+        if (!profile) return { success: false, error: "No profile found" };
 
         const updatedPreferences = { ...profile.preferences, ...preferences };
-        
-        return await get().updateProfile({ 
-          preferences: updatedPreferences 
+
+        return await get().updateProfile({
+          preferences: updatedPreferences,
         });
       },
 
@@ -353,18 +367,19 @@ export const useAuthStore = create<AuthStore>()(
       refreshSession: async () => {
         try {
           const { session, error } = await authHelpers.getCurrentSession();
-          
+
           if (error) {
-            console.error('Refresh session error:', error);
+            console.error("Refresh session error:", error);
             set({ user: null, session: null, profile: null });
             return;
           }
 
           if (session) {
-            const { user, error: userError } = await authHelpers.getCurrentUser();
-            
+            const { user, error: userError } =
+              await authHelpers.getCurrentUser();
+
             if (userError || !user) {
-              console.error('Get user error:', userError);
+              console.error("Get user error:", userError);
               set({ user: null, session: null, profile: null });
               return;
             }
@@ -375,56 +390,57 @@ export const useAuthStore = create<AuthStore>()(
             set({ user: null, session: null, profile: null });
           }
         } catch (error) {
-          console.error('Refresh session error:', error);
+          console.error("Refresh session error:", error);
           set({ user: null, session: null, profile: null });
         }
       },
 
       checkAuthStatus: async () => {
         set({ loading: true });
-        
+
         try {
-          const { user, profile, error } = await supabaseUtils.getAuthenticatedUserWithProfile();
-          
+          const { user, profile, error } =
+            await supabaseUtils.getAuthenticatedUserWithProfile();
+
           if (error) {
-            console.error('Check auth status error:', error);
-            set({ 
-              user: null, 
-              profile: null, 
-              session: null, 
-              loading: false, 
-              initialized: true 
+            console.error("Check auth status error:", error);
+            set({
+              user: null,
+              profile: null,
+              session: null,
+              loading: false,
+              initialized: true,
             });
             return;
           }
 
           if (user && profile) {
             const { session } = await authHelpers.getCurrentSession();
-            set({ 
-              user, 
-              profile, 
-              session, 
-              loading: false, 
-              initialized: true 
+            set({
+              user,
+              profile,
+              session,
+              loading: false,
+              initialized: true,
             });
           } else {
-            set({ 
-              user: null, 
-              profile: null, 
-              session: null, 
-              loading: false, 
-              initialized: true 
+            set({
+              user: null,
+              profile: null,
+              session: null,
+              loading: false,
+              initialized: true,
             });
           }
         } catch (error) {
-          console.error('Check auth status error:', error);
-          set({ 
-            user: null, 
-            profile: null, 
-            session: null, 
-            loading: false, 
+          console.error("Check auth status error:", error);
+          set({
+            user: null,
+            profile: null,
+            session: null,
+            loading: false,
             initialized: true,
-            error: 'Failed to check authentication status'
+            error: "Failed to check authentication status",
           });
         }
       },
@@ -444,12 +460,14 @@ export const useAuthStore = create<AuthStore>()(
         if (!user) return;
 
         try {
-          const { data: profile, error } = await dbHelpers.getUserProfile(user.id);
-          
+          const { data: profile, error } = await dbHelpers.getUserProfile(
+            user.id,
+          );
+
           if (error) {
-            console.error('Load user profile error:', error);
+            console.error("Load user profile error:", error);
             // If profile doesn't exist, create a default one
-            if (error.code === 'PGRST116') {
+            if (error.code === "PGRST116") {
               await get().createDefaultProfile(user);
             }
             return;
@@ -459,7 +477,7 @@ export const useAuthStore = create<AuthStore>()(
             set({ profile });
           }
         } catch (error) {
-          console.error('Load user profile error:', error);
+          console.error("Load user profile error:", error);
         }
       },
 
@@ -468,9 +486,9 @@ export const useAuthStore = create<AuthStore>()(
           const defaultProfile: Partial<UserProfile> = {
             id: user.id,
             email: user.email,
-            full_name: user.user_metadata?.full_name || '',
-            role: 'user',
-            subscription_status: 'free',
+            full_name: user.user_metadata?.full_name || "",
+            role: "user",
+            subscription_status: "free",
             email_verified: user.email_confirmed_at ? true : false,
             phone_verified: false,
             onboarding_completed: false,
@@ -479,10 +497,13 @@ export const useAuthStore = create<AuthStore>()(
             updated_at: new Date().toISOString(),
           };
 
-          const { data, error } = await dbHelpers.updateUserProfile(user.id, defaultProfile);
-          
+          const { data, error } = await dbHelpers.updateUserProfile(
+            user.id,
+            defaultProfile,
+          );
+
           if (error) {
-            console.error('Create default profile error:', error);
+            console.error("Create default profile error:", error);
             return;
           }
 
@@ -490,15 +511,15 @@ export const useAuthStore = create<AuthStore>()(
             set({ profile: data });
           }
         } catch (error) {
-          console.error('Create default profile error:', error);
+          console.error("Create default profile error:", error);
         }
       },
     }),
     {
-      name: 'auth-store',
+      name: "auth-store",
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 // Initialize auth state on app start
@@ -508,8 +529,8 @@ export const initializeAuth = async () => {
 
   // Set up auth state change listener
   authHelpers.onAuthStateChange(async (event, session) => {
-    console.log('Auth state change:', event, session);
-    
+    console.log("Auth state change:", event, session);
+
     const { refreshSession } = useAuthStore.getState();
     await refreshSession();
   });
@@ -518,17 +539,17 @@ export const initializeAuth = async () => {
 // Utility functions for components
 export const useAuth = () => {
   const store = useAuthStore();
-  
+
   return {
     ...store,
     isAuthenticated: !!store.user && !!store.session,
     isLoading: store.loading,
     isInitialized: store.initialized,
     hasProfile: !!store.profile,
-    userRole: store.profile?.role || 'user',
-    subscriptionStatus: store.profile?.subscription_status || 'free',
+    userRole: store.profile?.role || "user",
+    subscriptionStatus: store.profile?.subscription_status || "free",
   };
 };
 
 // Export store for direct access
-export default useAuthStore; 
+export default useAuthStore;

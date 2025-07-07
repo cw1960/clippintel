@@ -1,4 +1,4 @@
-import type { ReactNode, ComponentType } from 'react';
+import type { ReactNode, ComponentType } from "react";
 
 // Navigation menu item interface
 export interface NavItem {
@@ -8,7 +8,7 @@ export interface NavItem {
   path: string;
   badge?: number;
   children?: NavItem[];
-  requiredRole?: 'user' | 'premium' | 'admin' | 'enterprise';
+  requiredRole?: "user" | "premium" | "admin" | "enterprise";
 }
 
 // User menu item interface
@@ -26,7 +26,7 @@ export interface Notification {
   id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: "info" | "success" | "warning" | "error";
   read: boolean;
   timestamp: Date;
   action?: {
@@ -54,7 +54,7 @@ export interface LayoutActions {
   setActiveNavItem: (itemId: string) => void;
   markNotificationAsRead: (notificationId: string) => void;
   markAllNotificationsAsRead: () => void;
-  addNotification: (notification: Omit<Notification, 'id'>) => void;
+  addNotification: (notification: Omit<Notification, "id">) => void;
   removeNotification: (notificationId: string) => void;
 }
 
@@ -83,7 +83,7 @@ export interface AppShellProps {
   children: ReactNode;
   navbar?: {
     width: { base: number; sm: number; lg: number };
-    breakpoint: 'sm' | 'md' | 'lg' | 'xl';
+    breakpoint: "sm" | "md" | "lg" | "xl";
   };
   header?: {
     height: { base: number; sm: number };
@@ -96,15 +96,15 @@ export interface RouteConfig {
   path: string;
   component: ComponentType;
   protected: boolean;
-  requiredRole?: 'user' | 'premium' | 'admin' | 'enterprise';
+  requiredRole?: "user" | "premium" | "admin" | "enterprise";
   exact?: boolean;
   title?: string;
   showInNav?: boolean;
-  navItem?: Omit<NavItem, 'path'>;
+  navItem?: Omit<NavItem, "path">;
 }
 
 // Mobile breakpoint helpers
-export type MobileBreakpoint = 'base' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type MobileBreakpoint = "base" | "xs" | "sm" | "md" | "lg" | "xl";
 
 export interface ResponsiveValue<T> {
   base?: T;
@@ -129,4 +129,4 @@ export interface AnimationPresets {
     transition: string;
     ease: string;
   };
-} 
+}

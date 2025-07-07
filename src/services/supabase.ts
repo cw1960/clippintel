@@ -1,13 +1,20 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import type { User, Session } from '@supabase/supabase-js';
-import type { UserProfile } from '../types/user';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { User, Session } from "@supabase/supabase-js";
+import type { UserProfile } from "../types/user";
 
 // Supabase configuration with provided credentials
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://joxzubnkgelzxoyzotbt.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpveHp1Ym5rZ2VsenhveXpvdGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4Mzg1ODQsImV4cCI6MjA2NzQxNDU4NH0.3oTCzc1g_G7-QCrEkYDgj2US4z2olyd6A7X-jlpcUoI';
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ||
+  "https://joxzubnkgelzxoyzotbt.supabase.co";
+const SUPABASE_ANON_KEY =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpveHp1Ym5rZ2VsenhveXpvdGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4Mzg1ODQsImV4cCI6MjA2NzQxNDU4NH0.3oTCzc1g_G7-QCrEkYDgj2US4z2olyd6A7X-jlpcUoI";
 
 // Initialize Supabase client
-export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabase: SupabaseClient = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+);
 
 // Types for better TypeScript support
 export interface AuthResponse {
@@ -29,7 +36,7 @@ export interface OpportunityRecord {
   value?: number;
   currency?: string;
   deadline?: string;
-  status: 'new' | 'reviewed' | 'applied' | 'rejected' | 'accepted';
+  status: "new" | "reviewed" | "applied" | "rejected" | "accepted";
   match_score: number;
   tags: string[];
   created_at: string;
@@ -41,7 +48,11 @@ export const authHelpers = {
   /**
    * Sign up a new user with email and password
    */
-  async signUp(email: string, password: string, userData?: { full_name?: string }) {
+  async signUp(
+    email: string,
+    password: string,
+    userData?: { full_name?: string },
+  ) {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -55,21 +66,19 @@ export const authHelpers = {
 
       // Create user profile if signup successful
       if (data.user && !error) {
-        await supabase
-          .from('user_profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email,
-            full_name: userData?.full_name || '',
-            role: 'user',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
+        await supabase.from("user_profiles").insert({
+          id: data.user.id,
+          email: data.user.email,
+          full_name: userData?.full_name || "",
+          role: "user",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
       }
 
       return { data, error: null };
     } catch (error) {
-      console.error('Sign up error:', error);
+      console.error("Sign up error:", error);
       return { data: null, error };
     }
   },
@@ -87,7 +96,7 @@ export const authHelpers = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error("Sign in error:", error);
       return { data: null, error };
     }
   },
@@ -101,7 +110,7 @@ export const authHelpers = {
       if (error) throw error;
       return { error: null };
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error("Sign out error:", error);
       return { error };
     }
   },
@@ -111,11 +120,14 @@ export const authHelpers = {
    */
   async getCurrentUser() {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
       if (error) throw error;
       return { user, error: null };
     } catch (error) {
-      console.error('Get user error:', error);
+      console.error("Get user error:", error);
       return { user: null, error };
     }
   },
@@ -125,11 +137,14 @@ export const authHelpers = {
    */
   async getCurrentSession() {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error) throw error;
       return { session, error: null };
     } catch (error) {
-      console.error('Get session error:', error);
+      console.error("Get session error:", error);
       return { session: null, error };
     }
   },
@@ -145,7 +160,7 @@ export const authHelpers = {
       if (error) throw error;
       return { error: null };
     } catch (error) {
-      console.error('Reset password error:', error);
+      console.error("Reset password error:", error);
       return { error };
     }
   },
@@ -159,7 +174,7 @@ export const authHelpers = {
       if (error) throw error;
       return { error: null };
     } catch (error) {
-      console.error('Update password error:', error);
+      console.error("Update password error:", error);
       return { error };
     }
   },
@@ -167,7 +182,9 @@ export const authHelpers = {
   /**
    * Subscribe to auth state changes
    */
-  onAuthStateChange(callback: (event: string, session: Session | null) => void) {
+  onAuthStateChange(
+    callback: (event: string, session: Session | null) => void,
+  ) {
     return supabase.auth.onAuthStateChange(callback);
   },
 };
@@ -177,18 +194,20 @@ export const dbHelpers = {
   /**
    * Get user profile
    */
-  async getUserProfile(userId: string): Promise<{ data: UserProfile | null; error: any }> {
+  async getUserProfile(
+    userId: string,
+  ): Promise<{ data: UserProfile | null; error: any }> {
     try {
       const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', userId)
+        .from("user_profiles")
+        .select("*")
+        .eq("id", userId)
         .single();
 
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Get user profile error:', error);
+      console.error("Get user profile error:", error);
       return { data: null, error };
     }
   },
@@ -199,19 +218,19 @@ export const dbHelpers = {
   async updateUserProfile(userId: string, updates: Partial<UserProfile>) {
     try {
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from("user_profiles")
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', userId)
+        .eq("id", userId)
         .select()
         .single();
 
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Update user profile error:', error);
+      console.error("Update user profile error:", error);
       return { data: null, error };
     }
   },
@@ -219,25 +238,28 @@ export const dbHelpers = {
   /**
    * Get opportunities for user
    */
-  async getOpportunities(userId: string, filters?: {
-    category?: string;
-    status?: string;
-    limit?: number;
-    offset?: number;
-  }) {
+  async getOpportunities(
+    userId: string,
+    filters?: {
+      category?: string;
+      status?: string;
+      limit?: number;
+      offset?: number;
+    },
+  ) {
     try {
       let query = supabase
-        .from('opportunities')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .from("opportunities")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
 
       if (filters?.category) {
-        query = query.eq('category', filters.category);
+        query = query.eq("category", filters.category);
       }
 
       if (filters?.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq("status", filters.status);
       }
 
       if (filters?.limit) {
@@ -245,7 +267,10 @@ export const dbHelpers = {
       }
 
       if (filters?.offset) {
-        query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 10) - 1,
+        );
       }
 
       const { data, error } = await query;
@@ -253,7 +278,7 @@ export const dbHelpers = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Get opportunities error:', error);
+      console.error("Get opportunities error:", error);
       return { data: null, error };
     }
   },
@@ -261,10 +286,12 @@ export const dbHelpers = {
   /**
    * Create opportunity
    */
-  async createOpportunity(opportunity: Omit<OpportunityRecord, 'id' | 'created_at' | 'updated_at'>) {
+  async createOpportunity(
+    opportunity: Omit<OpportunityRecord, "id" | "created_at" | "updated_at">,
+  ) {
     try {
       const { data, error } = await supabase
-        .from('opportunities')
+        .from("opportunities")
         .insert({
           ...opportunity,
           created_at: new Date().toISOString(),
@@ -276,7 +303,7 @@ export const dbHelpers = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Create opportunity error:', error);
+      console.error("Create opportunity error:", error);
       return { data: null, error };
     }
   },
@@ -287,19 +314,19 @@ export const dbHelpers = {
   async updateOpportunity(id: string, updates: Partial<OpportunityRecord>) {
     try {
       const { data, error } = await supabase
-        .from('opportunities')
+        .from("opportunities")
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Update opportunity error:', error);
+      console.error("Update opportunity error:", error);
       return { data: null, error };
     }
   },
@@ -310,14 +337,14 @@ export const dbHelpers = {
   async deleteOpportunity(id: string) {
     try {
       const { error } = await supabase
-        .from('opportunities')
+        .from("opportunities")
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
       return { error: null };
     } catch (error) {
-      console.error('Delete opportunity error:', error);
+      console.error("Delete opportunity error:", error);
       return { error };
     }
   },
@@ -328,16 +355,16 @@ export const dbHelpers = {
   async getUserCriteria(userId: string) {
     try {
       const { data, error } = await supabase
-        .from('user_criteria')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        .from("user_criteria")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Get user criteria error:', error);
+      console.error("Get user criteria error:", error);
       return { data: null, error };
     }
   },
@@ -356,7 +383,7 @@ export const dbHelpers = {
   }) {
     try {
       const { data, error } = await supabase
-        .from('user_criteria')
+        .from("user_criteria")
         .insert({
           ...criteria,
           is_active: true,
@@ -369,7 +396,7 @@ export const dbHelpers = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Create user criteria error:', error);
+      console.error("Create user criteria error:", error);
       return { data: null, error };
     }
   },
@@ -382,16 +409,16 @@ export const realtimeHelpers = {
    */
   subscribeToOpportunities(userId: string, callback: (payload: any) => void) {
     return supabase
-      .channel('opportunities')
+      .channel("opportunities")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'opportunities',
+          event: "*",
+          schema: "public",
+          table: "opportunities",
           filter: `user_id=eq.${userId}`,
         },
-        callback
+        callback,
       )
       .subscribe();
   },
@@ -401,16 +428,16 @@ export const realtimeHelpers = {
    */
   subscribeToUserProfile(userId: string, callback: (payload: any) => void) {
     return supabase
-      .channel('user_profile')
+      .channel("user_profile")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'user_profiles',
+          event: "UPDATE",
+          schema: "public",
+          table: "user_profiles",
           filter: `id=eq.${userId}`,
         },
-        callback
+        callback,
       )
       .subscribe();
   },
@@ -439,14 +466,16 @@ export const supabaseUtils = {
   async getAuthenticatedUserWithProfile() {
     try {
       const { user, error: userError } = await authHelpers.getCurrentUser();
-      if (userError || !user) return { user: null, profile: null, error: userError };
+      if (userError || !user)
+        return { user: null, profile: null, error: userError };
 
-      const { data: profile, error: profileError } = await dbHelpers.getUserProfile(user.id);
+      const { data: profile, error: profileError } =
+        await dbHelpers.getUserProfile(user.id);
       if (profileError) return { user, profile: null, error: profileError };
 
       return { user, profile, error: null };
     } catch (error) {
-      console.error('Get authenticated user with profile error:', error);
+      console.error("Get authenticated user with profile error:", error);
       return { user: null, profile: null, error };
     }
   },
@@ -463,7 +492,7 @@ export const supabaseUtils = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Upload file error:', error);
+      console.error("Upload file error:", error);
       return { data: null, error };
     }
   },
@@ -472,12 +501,10 @@ export const supabaseUtils = {
    * Get public URL for file
    */
   getPublicUrl(bucket: string, path: string) {
-    const { data } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
-    
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+
     return data.publicUrl;
   },
 };
 
-export default supabase; 
+export default supabase;

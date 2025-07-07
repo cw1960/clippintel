@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AuthLayout, LoginForm, SignupForm } from '../components/auth';
+import React, { useState } from "react";
+import { AuthLayout, LoginForm, SignupForm } from "../components/auth";
 
 export const LoginPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -10,7 +10,7 @@ export const LoginPage: React.FC = () => {
 
   const handleForgotPassword = () => {
     // Handle forgot password logic
-    console.log('Forgot password clicked');
+    console.log("Forgot password clicked");
   };
 
   return (
@@ -20,10 +20,7 @@ export const LoginPage: React.FC = () => {
       showFeatures={true}
     >
       {isSignUp ? (
-        <SignupForm
-          onSignIn={handleToggleForm}
-          redirectTo="/dashboard"
-        />
+        <SignupForm onSignIn={handleToggleForm} redirectTo="/dashboard" />
       ) : (
         <LoginForm
           onSignUp={handleToggleForm}
@@ -35,4 +32,4 @@ export const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage; 
+export default LoginPage;

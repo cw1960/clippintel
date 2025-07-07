@@ -1,11 +1,11 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface NotificationSettings {
   email: boolean;
   push: boolean;
   sms: boolean;
-  frequency: 'immediate' | 'daily' | 'weekly';
+  frequency: "immediate" | "daily" | "weekly";
   types: {
     newOpportunities: boolean;
     deadlineReminders: boolean;
@@ -22,9 +22,9 @@ interface FilterSettings {
 }
 
 interface UISettings {
-  theme: 'light' | 'dark' | 'auto';
+  theme: "light" | "dark" | "auto";
   language: string;
-  dateFormat: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
+  dateFormat: "MM/DD/YYYY" | "DD/MM/YYYY" | "YYYY-MM-DD";
   timezone: string;
   compactMode: boolean;
   showTooltips: boolean;
@@ -46,7 +46,7 @@ interface SettingsState {
   integrations: IntegrationSettings;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   updateFilterSettings: (settings: Partial<FilterSettings>) => void;
@@ -62,7 +62,7 @@ const defaultSettings = {
     email: true,
     push: true,
     sms: false,
-    frequency: 'daily' as const,
+    frequency: "daily" as const,
     types: {
       newOpportunities: true,
       deadlineReminders: true,
@@ -77,20 +77,20 @@ const defaultSettings = {
     saveSearchHistory: true,
   },
   ui: {
-    theme: 'dark' as const,
-    language: 'en',
-    dateFormat: 'MM/DD/YYYY' as const,
+    theme: "dark" as const,
+    language: "en",
+    dateFormat: "MM/DD/YYYY" as const,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     compactMode: false,
     showTooltips: true,
   },
   integrations: {
-    supabaseUrl: '',
-    supabaseKey: '',
-    whopApiKey: '',
+    supabaseUrl: "",
+    supabaseKey: "",
+    whopApiKey: "",
     rateLimitPerMinute: 60,
     enableWebhooks: false,
-    webhookUrl: '',
+    webhookUrl: "",
   },
 };
 
@@ -100,45 +100,49 @@ export const useSettingsStore = create<SettingsState>()(
       ...defaultSettings,
       isLoading: false,
       error: null,
-      
+
       updateNotificationSettings: (settings) => {
         set((state) => ({
           notifications: { ...state.notifications, ...settings },
         }));
       },
-      
+
       updateFilterSettings: (settings) => {
         set((state) => ({
           filters: { ...state.filters, ...settings },
         }));
       },
-      
+
       updateUISettings: (settings) => {
         set((state) => ({
           ui: { ...state.ui, ...settings },
         }));
       },
-      
+
       updateIntegrationSettings: (settings) => {
         set((state) => ({
           integrations: { ...state.integrations, ...settings },
         }));
       },
-      
+
       resetToDefaults: () => {
         set({ ...defaultSettings });
       },
-      
+
       exportSettings: () => {
         const { notifications, filters, ui, integrations } = get();
-        return JSON.stringify({
-          notifications,
-          filters,
-          ui,
-          integrations,
-        }, null, 2);
+        return JSON.stringify(
+          {
+            notifications,
+            filters,
+            ui,
+            integrations,
+          },
+          null,
+          2,
+        );
       },
-      
+
       importSettings: (settingsJson) => {
         try {
           const settings = JSON.parse(settingsJson);
@@ -147,19 +151,19 @@ export const useSettingsStore = create<SettingsState>()(
             ...settings,
           }));
         } catch (error) {
-          console.error('Failed to import settings:', error);
-          set({ error: 'Failed to import settings' });
+          console.error("Failed to import settings:", error);
+          set({ error: "Failed to import settings" });
         }
       },
     }),
     {
-      name: 'settings-storage',
+      name: "settings-storage",
       partialize: (state) => ({
         notifications: state.notifications,
         filters: state.filters,
         ui: state.ui,
         integrations: state.integrations,
       }),
-    }
-  )
-); 
+    },
+  ),
+);

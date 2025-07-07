@@ -14,7 +14,7 @@ export interface Opportunity {
   createdAt: Date;
   updatedAt: Date;
   userId: string;
-  
+
   // Additional metadata
   metadata?: {
     location?: string;
@@ -32,13 +32,13 @@ export interface Opportunity {
 }
 
 export enum OpportunityStatus {
-  NEW = 'new',
-  REVIEWED = 'reviewed',
-  APPLIED = 'applied',
-  REJECTED = 'rejected',
-  ACCEPTED = 'accepted',
-  EXPIRED = 'expired',
-  ARCHIVED = 'archived',
+  NEW = "new",
+  REVIEWED = "reviewed",
+  APPLIED = "applied",
+  REJECTED = "rejected",
+  ACCEPTED = "accepted",
+  EXPIRED = "expired",
+  ARCHIVED = "archived",
 }
 
 export interface OpportunityFilter {
@@ -61,8 +61,14 @@ export interface OpportunityFilter {
 }
 
 export interface OpportunitySort {
-  field: 'title' | 'matchScore' | 'value' | 'deadline' | 'createdAt' | 'updatedAt';
-  direction: 'asc' | 'desc';
+  field:
+    | "title"
+    | "matchScore"
+    | "value"
+    | "deadline"
+    | "createdAt"
+    | "updatedAt";
+  direction: "asc" | "desc";
 }
 
 export interface OpportunitySearchResult {
@@ -115,20 +121,20 @@ export interface OpportunityAnalytics {
   }[];
   recentActivity: {
     date: Date;
-    action: 'created' | 'updated' | 'status_changed';
+    action: "created" | "updated" | "status_changed";
     count: number;
   }[];
 }
 
 export interface OpportunityExport {
-  format: 'csv' | 'xlsx' | 'pdf' | 'json';
+  format: "csv" | "xlsx" | "pdf" | "json";
   filters?: OpportunityFilter;
   fields?: (keyof Opportunity)[];
   includeMetadata?: boolean;
 }
 
 export interface OpportunityImport {
-  source: 'csv' | 'xlsx' | 'json' | 'api';
+  source: "csv" | "xlsx" | "json" | "api";
   data: Partial<Opportunity>[];
   options?: {
     skipDuplicates?: boolean;
@@ -141,7 +147,7 @@ export interface OpportunityNotification {
   id: string;
   userId: string;
   opportunityId: string;
-  type: 'new_match' | 'deadline_reminder' | 'status_update' | 'value_change';
+  type: "new_match" | "deadline_reminder" | "status_update" | "value_change";
   title: string;
   message: string;
   isRead: boolean;
@@ -158,7 +164,12 @@ export interface OpportunityWebhook {
   id: string;
   userId: string;
   url: string;
-  events: ('opportunity.created' | 'opportunity.updated' | 'opportunity.matched' | 'opportunity.deadline')[];
+  events: (
+    | "opportunity.created"
+    | "opportunity.updated"
+    | "opportunity.matched"
+    | "opportunity.deadline"
+  )[];
   isActive: boolean;
   secret?: string;
   createdAt: Date;
@@ -174,7 +185,7 @@ export interface OpportunityTemplate {
   category: string;
   fields: {
     name: string;
-    type: 'text' | 'number' | 'date' | 'select' | 'multiselect' | 'textarea';
+    type: "text" | "number" | "date" | "select" | "multiselect" | "textarea";
     required: boolean;
     options?: string[];
     defaultValue?: any;
@@ -183,4 +194,4 @@ export interface OpportunityTemplate {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
-} 
+}

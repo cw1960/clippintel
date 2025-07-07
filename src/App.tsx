@@ -1,15 +1,15 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { AppShell, Title, Text, Container } from '@mantine/core';
-import { useAuthStore } from './stores/authStore';
-import { ProtectedRoute } from './components/auth';
-import LoginPage from './pages/LoginPage';
-import { DashboardPage } from './pages/DashboardPage';
-import CriteriaPage from './pages/CriteriaPage';
-import NotificationsPage from './pages/NotificationsPage';
-import SettingsPage from './pages/SettingsPage';
-import NotFoundPage from './pages/NotFoundPage';
-import { addMockNotifications } from './stores/layoutStore';
-import { useEffect } from 'react';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { AppShell, Title, Text, Container } from "@mantine/core";
+import { useAuthStore } from "./stores/authStore";
+import { ProtectedRoute } from "./components/auth";
+import LoginPage from "./pages/LoginPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import CriteriaPage from "./pages/CriteriaPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import SettingsPage from "./pages/SettingsPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import { addMockNotifications } from "./stores/layoutStore";
+import { useEffect } from "react";
 
 function App() {
   const { user, loading } = useAuthStore();
@@ -40,13 +40,13 @@ function App() {
       header={{ height: 60 }}
       navbar={{
         width: 300,
-        breakpoint: 'sm',
+        breakpoint: "sm",
         collapsed: { mobile: true },
       }}
       padding="md"
     >
       <AppShell.Header>
-        <Container h={60} style={{ display: 'flex', alignItems: 'center' }}>
+        <Container h={60} style={{ display: "flex", alignItems: "center" }}>
           <Title order={2} c="blue">
             Clipp Intelligence
           </Title>
@@ -61,53 +61,53 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           {/* Protected App Routes */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/criteria" 
+          <Route
+            path="/criteria"
             element={
               <ProtectedRoute>
                 <CriteriaPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/criteria/manage" 
+          <Route
+            path="/criteria/manage"
             element={
               <ProtectedRoute>
                 <CriteriaPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/criteria/templates" 
+          <Route
+            path="/criteria/templates"
             element={
               <ProtectedRoute>
                 <CriteriaPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/notifications" 
+          <Route
+            path="/notifications"
             element={
               <ProtectedRoute>
                 <NotificationsPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/settings" 
+          <Route
+            path="/settings"
             element={
               <ProtectedRoute>
                 <SettingsPage />
               </ProtectedRoute>
-            } 
+            }
           />
           {/* 404 Page */}
           <Route path="*" element={<NotFoundPage />} />

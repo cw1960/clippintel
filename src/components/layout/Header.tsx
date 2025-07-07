@@ -16,7 +16,7 @@ import {
   Center,
   Tooltip,
   useMatches,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   IconBell,
   IconUser,
@@ -28,14 +28,17 @@ import {
   IconX,
   IconBrain,
   IconExternalLink,
-} from '@tabler/icons-react';
-import { useAuthStore } from '../../stores/authStore';
-import { useNotificationsState, useUserMenuState } from '../../stores/layoutStore';
-import type { HeaderProps } from '../../types/layout';
+} from "@tabler/icons-react";
+import { useAuthStore } from "../../stores/authStore";
+import {
+  useNotificationsState,
+  useUserMenuState,
+} from "../../stores/layoutStore";
+import type { HeaderProps } from "../../types/layout";
 
 export const Header: React.FC<HeaderProps> = ({
   burger,
-  title = 'ClippIntell',
+  title = "ClippIntell",
   showNotifications = true,
   showUserMenu = true,
   showThemeToggle = true,
@@ -62,7 +65,10 @@ export const Header: React.FC<HeaderProps> = ({
     await signOut();
   };
 
-  const handleNotificationAction = (notificationId: string, actionPath?: string) => {
+  const handleNotificationAction = (
+    notificationId: string,
+    actionPath?: string,
+  ) => {
     markAsRead(notificationId);
     if (actionPath) {
       // Navigate to the action path
@@ -72,11 +78,11 @@ export const Header: React.FC<HeaderProps> = ({
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'success':
+      case "success":
         return <IconCheck size={16} color="green" />;
-      case 'warning':
+      case "warning":
         return <IconBell size={16} color="orange" />;
-      case 'error':
+      case "error":
         return <IconX size={16} color="red" />;
       default:
         return <IconBell size={16} color="blue" />;
@@ -93,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({
     if (days > 0) return `${days}d ago`;
     if (hours > 0) return `${hours}h ago`;
     if (minutes > 0) return `${minutes}m ago`;
-    return 'Just now';
+    return "Just now";
   };
 
   return (
@@ -106,11 +112,12 @@ export const Header: React.FC<HeaderProps> = ({
             style={{
               width: 32,
               height: 32,
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-cyan-5))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              borderRadius: "50%",
+              background:
+                "linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-cyan-5))",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <IconBrain size={20} color="white" />
@@ -127,14 +134,16 @@ export const Header: React.FC<HeaderProps> = ({
       <Group gap="xs">
         {/* Theme toggle */}
         {showThemeToggle && (
-          <Tooltip label={`Switch to ${colorScheme === 'dark' ? 'light' : 'dark'} theme`}>
+          <Tooltip
+            label={`Switch to ${colorScheme === "dark" ? "light" : "dark"} theme`}
+          >
             <ActionIcon
               onClick={() => toggleColorScheme()}
               variant="default"
               size="lg"
               aria-label="Toggle color scheme"
             >
-              {colorScheme === 'dark' ? (
+              {colorScheme === "dark" ? (
                 <IconSun size={18} />
               ) : (
                 <IconMoonStars size={18} />
@@ -147,10 +156,10 @@ export const Header: React.FC<HeaderProps> = ({
         {showNotifications && (
           <>
             <Tooltip label="Notifications">
-              <Indicator 
-                inline 
-                label={unreadCount > 0 ? unreadCount : undefined} 
-                size={16} 
+              <Indicator
+                inline
+                label={unreadCount > 0 ? unreadCount : undefined}
+                size={16}
                 disabled={unreadCount === 0}
               >
                 <ActionIcon
@@ -177,14 +186,12 @@ export const Header: React.FC<HeaderProps> = ({
                 {/* Header actions */}
                 <Group justify="space-between">
                   <Text size="sm" c="dimmed">
-                    {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
+                    {unreadCount > 0
+                      ? `${unreadCount} unread`
+                      : "All caught up!"}
                   </Text>
                   {unreadCount > 0 && (
-                    <Button
-                      variant="subtle"
-                      size="xs"
-                      onClick={markAllAsRead}
-                    >
+                    <Button variant="subtle" size="xs" onClick={markAllAsRead}>
                       Mark all as read
                     </Button>
                   )}
@@ -193,11 +200,14 @@ export const Header: React.FC<HeaderProps> = ({
                 <Divider />
 
                 {/* Notifications list */}
-                <ScrollArea style={{ height: 'calc(100vh - 200px)' }}>
+                <ScrollArea style={{ height: "calc(100vh - 200px)" }}>
                   {notifications.length === 0 ? (
                     <Center py="xl">
                       <Stack align="center" gap="md">
-                        <IconBell size={48} color="var(--mantine-color-dimmed)" />
+                        <IconBell
+                          size={48}
+                          color="var(--mantine-color-dimmed)"
+                        />
                         <Text c="dimmed" ta="center">
                           No notifications yet
                         </Text>
@@ -209,22 +219,31 @@ export const Header: React.FC<HeaderProps> = ({
                         <Box
                           key={notification.id}
                           style={{
-                            padding: 'var(--mantine-spacing-sm)',
-                            borderRadius: 'var(--mantine-radius-sm)',
-                            backgroundColor: notification.read 
-                              ? 'transparent' 
-                              : 'var(--mantine-color-blue-light)',
+                            padding: "var(--mantine-spacing-sm)",
+                            borderRadius: "var(--mantine-radius-sm)",
+                            backgroundColor: notification.read
+                              ? "transparent"
+                              : "var(--mantine-color-blue-light)",
                             border: `1px solid ${
-                              notification.read 
-                                ? 'var(--mantine-color-default-border)' 
-                                : 'var(--mantine-color-blue-outline)'
+                              notification.read
+                                ? "var(--mantine-color-default-border)"
+                                : "var(--mantine-color-blue-outline)"
                             }`,
-                            cursor: 'pointer',
+                            cursor: "pointer",
                           }}
-                          onClick={() => handleNotificationAction(notification.id, notification.action?.path)}
+                          onClick={() =>
+                            handleNotificationAction(
+                              notification.id,
+                              notification.action?.path,
+                            )
+                          }
                         >
                           <Group justify="space-between" align="flex-start">
-                            <Group align="flex-start" gap="sm" style={{ flex: 1 }}>
+                            <Group
+                              align="flex-start"
+                              gap="sm"
+                              style={{ flex: 1 }}
+                            >
                               {getNotificationIcon(notification.type)}
                               <Stack gap={4} style={{ flex: 1 }}>
                                 <Text size="sm" fw={500}>
@@ -234,14 +253,18 @@ export const Header: React.FC<HeaderProps> = ({
                                   {notification.message}
                                 </Text>
                                 <Text size="xs" c="dimmed">
-                                  {formatNotificationTime(notification.timestamp)}
+                                  {formatNotificationTime(
+                                    notification.timestamp,
+                                  )}
                                 </Text>
                                 {notification.action && (
                                   <Group gap="xs">
                                     <Button
                                       size="xs"
                                       variant="subtle"
-                                      rightSection={<IconExternalLink size={12} />}
+                                      rightSection={
+                                        <IconExternalLink size={12} />
+                                      }
                                     >
                                       {notification.action.label}
                                     </Button>
@@ -284,9 +307,9 @@ export const Header: React.FC<HeaderProps> = ({
             <Menu.Target>
               <UnstyledButton>
                 <Group gap="sm">
-                  <Avatar 
-                    src={profile?.avatar_url} 
-                    size="sm" 
+                  <Avatar
+                    src={profile?.avatar_url}
+                    size="sm"
                     radius="xl"
                     color="blue"
                   >
@@ -295,7 +318,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {!isMobile && (
                     <Stack gap={0}>
                       <Text size="sm" fw={500}>
-                        {profile?.full_name || user.email?.split('@')[0]}
+                        {profile?.full_name || user.email?.split("@")[0]}
                       </Text>
                       <Text size="xs" c="dimmed">
                         Free
@@ -309,9 +332,9 @@ export const Header: React.FC<HeaderProps> = ({
             <Menu.Dropdown>
               <Menu.Label>
                 <Group gap="sm">
-                  <Avatar 
-                    src={profile?.avatar_url} 
-                    size="sm" 
+                  <Avatar
+                    src={profile?.avatar_url}
+                    size="sm"
                     radius="xl"
                     color="blue"
                   >
@@ -319,7 +342,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </Avatar>
                   <Stack gap={0}>
                     <Text size="sm" fw={500}>
-                      {profile?.full_name || user.email?.split('@')[0]}
+                      {profile?.full_name || user.email?.split("@")[0]}
                     </Text>
                     <Text size="xs" c="dimmed">
                       {user.email}
@@ -332,14 +355,14 @@ export const Header: React.FC<HeaderProps> = ({
 
               <Menu.Item
                 leftSection={<IconUser size={14} />}
-                onClick={() => window.location.href = '/profile'}
+                onClick={() => (window.location.href = "/profile")}
               >
                 Profile
               </Menu.Item>
 
               <Menu.Item
                 leftSection={<IconSettings size={14} />}
-                onClick={() => window.location.href = '/settings'}
+                onClick={() => (window.location.href = "/settings")}
               >
                 Settings
               </Menu.Item>
@@ -359,4 +382,4 @@ export const Header: React.FC<HeaderProps> = ({
       </Group>
     </Group>
   );
-}; 
+};

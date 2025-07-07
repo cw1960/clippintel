@@ -1,7 +1,7 @@
-import { useSettingsStore } from '../stores/settingsStore';
+import { useSettingsStore } from "../stores/settingsStore";
 
-const DEFAULT_WHOP_API_KEY = import.meta.env.VITE_WHOP_API_KEY || '';
-const WHOP_BASE_URL = 'https://api.whop.com/v1';
+const DEFAULT_WHOP_API_KEY = import.meta.env.VITE_WHOP_API_KEY || "";
+const WHOP_BASE_URL = "https://api.whop.com/v1";
 
 interface WhopApiResponse<T = any> {
   data: T | null;
@@ -39,13 +39,13 @@ class WhopApiService {
 
   private async makeRequest<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<WhopApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const defaultHeaders = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.apiKey}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.apiKey}`,
     };
 
     try {
@@ -67,37 +67,38 @@ class WhopApiService {
         success: true,
       };
     } catch (error) {
-      console.error('Whop API request failed:', error);
+      console.error("Whop API request failed:", error);
       return {
         data: null,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
 
   // Opportunities
-  async getOpportunities(
-    filters?: {
-      category?: string;
-      minValue?: number;
-      maxValue?: number;
-      keywords?: string[];
-      limit?: number;
-      offset?: number;
-    }
-  ): Promise<WhopApiResponse<WhopOpportunity[]>> {
+  async getOpportunities(filters?: {
+    category?: string;
+    minValue?: number;
+    maxValue?: number;
+    keywords?: string[];
+    limit?: number;
+    offset?: number;
+  }): Promise<WhopApiResponse<WhopOpportunity[]>> {
     const params = new URLSearchParams();
-    
-    if (filters?.category) params.append('category', filters.category);
-    if (filters?.minValue) params.append('min_value', filters.minValue.toString());
-    if (filters?.maxValue) params.append('max_value', filters.maxValue.toString());
-    if (filters?.keywords) params.append('keywords', filters.keywords.join(','));
-    if (filters?.limit) params.append('limit', filters.limit.toString());
-    if (filters?.offset) params.append('offset', filters.offset.toString());
+
+    if (filters?.category) params.append("category", filters.category);
+    if (filters?.minValue)
+      params.append("min_value", filters.minValue.toString());
+    if (filters?.maxValue)
+      params.append("max_value", filters.maxValue.toString());
+    if (filters?.keywords)
+      params.append("keywords", filters.keywords.join(","));
+    if (filters?.limit) params.append("limit", filters.limit.toString());
+    if (filters?.offset) params.append("offset", filters.offset.toString());
 
     const queryString = params.toString();
-    const endpoint = `/opportunities${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/opportunities${queryString ? `?${queryString}` : ""}`;
 
     return this.makeRequest<WhopOpportunity[]>(endpoint);
   }
@@ -113,15 +114,17 @@ class WhopApiService {
       minValue?: number;
       maxValue?: number;
       limit?: number;
-    }
+    },
   ): Promise<WhopApiResponse<WhopOpportunity[]>> {
     const params = new URLSearchParams();
-    params.append('q', query);
-    
-    if (filters?.category) params.append('category', filters.category);
-    if (filters?.minValue) params.append('min_value', filters.minValue.toString());
-    if (filters?.maxValue) params.append('max_value', filters.maxValue.toString());
-    if (filters?.limit) params.append('limit', filters.limit.toString());
+    params.append("q", query);
+
+    if (filters?.category) params.append("category", filters.category);
+    if (filters?.minValue)
+      params.append("min_value", filters.minValue.toString());
+    if (filters?.maxValue)
+      params.append("max_value", filters.maxValue.toString());
+    if (filters?.limit) params.append("limit", filters.limit.toString());
 
     const queryString = params.toString();
     const endpoint = `/opportunities/search?${queryString}`;
@@ -131,16 +134,16 @@ class WhopApiService {
 
   // Categories
   async getCategories(): Promise<WhopApiResponse<string[]>> {
-    return this.makeRequest<string[]>('/categories');
+    return this.makeRequest<string[]>("/categories");
   }
 
   // Webhooks
   async createWebhook(
     url: string,
-    events: string[]
+    events: string[],
   ): Promise<WhopApiResponse<{ id: string; url: string; events: string[] }>> {
-    return this.makeRequest('/webhooks', {
-      method: 'POST',
+    return this.makeRequest("/webhooks", {
+      method: "POST",
       body: JSON.stringify({
         url,
         events,
@@ -150,13 +153,15 @@ class WhopApiService {
 
   async deleteWebhook(id: string): Promise<WhopApiResponse<void>> {
     return this.makeRequest(`/webhooks/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   // Health check
-  async ping(): Promise<WhopApiResponse<{ status: string; timestamp: string }>> {
-    return this.makeRequest('/ping');
+  async ping(): Promise<
+    WhopApiResponse<{ status: string; timestamp: string }>
+  > {
+    return this.makeRequest("/ping");
   }
 
   // Update API key
@@ -169,4 +174,4 @@ class WhopApiService {
 export const whopApi = new WhopApiService();
 
 // Export class for custom instances
-export default WhopApiService; 
+export default WhopApiService;

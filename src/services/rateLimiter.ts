@@ -1,4 +1,4 @@
-import { useSettingsStore } from '../stores/settingsStore';
+import { useSettingsStore } from "../stores/settingsStore";
 
 interface RateLimitInfo {
   count: number;
@@ -24,7 +24,7 @@ class RateLimiter {
   }
 
   private getKey(identifier: string): string {
-    return this.defaultOptions.keyGenerator 
+    return this.defaultOptions.keyGenerator
       ? this.defaultOptions.keyGenerator(identifier)
       : identifier;
   }
@@ -40,7 +40,7 @@ class RateLimiter {
 
   async checkLimit(
     identifier: string,
-    options?: Partial<RateLimiterOptions>
+    options?: Partial<RateLimiterOptions>,
   ): Promise<{
     allowed: boolean;
     remaining: number;
@@ -56,7 +56,7 @@ class RateLimiter {
 
     // Get or create limit info
     let limitInfo = this.limits.get(key);
-    
+
     if (!limitInfo || now > limitInfo.resetTime) {
       // Create new window
       limitInfo = {
@@ -90,13 +90,17 @@ class RateLimiter {
 
   async waitForLimit(
     identifier: string,
-    options?: Partial<RateLimiterOptions>
+    options?: Partial<RateLimiterOptions>,
   ): Promise<void> {
     const result = await this.checkLimit(identifier, options);
-    
+
     if (!result.allowed && result.retryAfter) {
-      console.log(`Rate limit exceeded for ${identifier}. Waiting ${result.retryAfter} seconds...`);
-      await new Promise(resolve => setTimeout(resolve, result.retryAfter! * 1000));
+      console.log(
+        `Rate limit exceeded for ${identifier}. Waiting ${result.retryAfter} seconds...`,
+      );
+      await new Promise((resolve) =>
+        setTimeout(resolve, result.retryAfter! * 1000),
+      );
       // Recursively wait until we can proceed
       return this.waitForLimit(identifier, options);
     }
@@ -141,7 +145,7 @@ export const supabaseRateLimiter = new RateLimiter({
 export const createUserRateLimiter = (userId: string): RateLimiter => {
   const settings = useSettingsStore.getState().integrations;
   const maxRequests = settings.rateLimitPerMinute || 60;
-  
+
   return new RateLimiter({
     maxRequests,
     windowMs: 60 * 1000,
@@ -155,7 +159,7 @@ export const rateLimitUtils = {
     rateLimiter: RateLimiter,
     identifier: string,
     operation: () => Promise<T>,
-    options?: Partial<RateLimiterOptions>
+    options?: Partial<RateLimiterOptions>,
   ): Promise<T> {
     await rateLimiter.waitForLimit(identifier, options);
     return operation();
@@ -166,27 +170,27 @@ export const rateLimitUtils = {
     identifier: string,
     items: T[],
     operation: (item: T) => Promise<R>,
-    options?: Partial<RateLimiterOptions>
+    options?: Partial<RateLimiterOptions>,
   ): Promise<R[]> {
     const results: R[] = [];
-    
+
     for (const item of items) {
       const result = await this.withRateLimit(
         rateLimiter,
         identifier,
         () => operation(item),
-        options
+        options,
       );
       results.push(result);
     }
-    
+
     return results;
   },
 
   createDelayedExecutor(
     rateLimiter: RateLimiter,
     identifier: string,
-    options?: Partial<RateLimiterOptions>
+    options?: Partial<RateLimiterOptions>,
   ) {
     return async <T>(operation: () => Promise<T>): Promise<T> => {
       return this.withRateLimit(rateLimiter, identifier, operation, options);
@@ -194,4 +198,4 @@ export const rateLimitUtils = {
   },
 };
 
-export default RateLimiter; 
+export default RateLimiter;

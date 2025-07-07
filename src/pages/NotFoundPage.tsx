@@ -1,22 +1,26 @@
-import { 
-  Container, 
-  Title, 
-  Text, 
-  Button, 
-  Group, 
+import {
+  Container,
+  Title,
+  Text,
+  Button,
+  Group,
   Center,
   Stack,
   Box,
   rem,
-} from '@mantine/core';
-import { IconHome, IconArrowLeft, IconExclamationCircle } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+} from "@mantine/core";
+import {
+  IconHome,
+  IconArrowLeft,
+  IconExclamationCircle,
+} from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 export const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    navigate('/dashboard');
+    navigate("/dashboard");
   };
 
   const handleGoBack = () => {
@@ -24,23 +28,26 @@ export const NotFoundPage: React.FC = () => {
   };
 
   return (
-    <Container size="md" style={{ height: '100vh' }}>
-      <Center style={{ height: '100%' }}>
+    <Container size="md" style={{ height: "100vh" }}>
+      <Center style={{ height: "100%" }}>
         <Stack align="center" gap="xl">
           {/* Error Icon */}
           <Box
             style={{
               width: rem(120),
               height: rem(120),
-              borderRadius: '50%',
-              backgroundColor: 'var(--mantine-color-blue-light)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '2px solid var(--mantine-color-blue-outline)',
+              borderRadius: "50%",
+              backgroundColor: "var(--mantine-color-blue-light)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "2px solid var(--mantine-color-blue-outline)",
             }}
           >
-            <IconExclamationCircle size={60} color="var(--mantine-color-blue-filled)" />
+            <IconExclamationCircle
+              size={60}
+              color="var(--mantine-color-blue-filled)"
+            />
           </Box>
 
           {/* Error Code */}
@@ -50,7 +57,7 @@ export const NotFoundPage: React.FC = () => {
               fontSize: rem(120),
               fontWeight: 900,
               lineHeight: 1,
-              color: 'var(--mantine-color-blue-6)',
+              color: "var(--mantine-color-blue-6)",
             }}
           >
             404
@@ -62,8 +69,8 @@ export const NotFoundPage: React.FC = () => {
               Oops! Page not found
             </Title>
             <Text c="dimmed" size="lg" ta="center" maw={500}>
-              The page you're looking for doesn't exist or has been moved. 
-              It might have been deleted, renamed, or you entered the wrong URL.
+              The page you're looking for doesn't exist or has been moved. It
+              might have been deleted, renamed, or you entered the wrong URL.
             </Text>
           </Stack>
 
@@ -90,19 +97,25 @@ export const NotFoundPage: React.FC = () => {
           {/* Additional Help */}
           <Box mt="xl">
             <Text size="sm" c="dimmed" ta="center">
-              Need help? Visit our{' '}
+              Need help? Visit our{" "}
               <Text
                 component="a"
                 href="/help"
-                style={{ color: 'var(--mantine-color-blue-6)', textDecoration: 'underline' }}
+                style={{
+                  color: "var(--mantine-color-blue-6)",
+                  textDecoration: "underline",
+                }}
               >
                 help center
-              </Text>{' '}
-              or{' '}
+              </Text>{" "}
+              or{" "}
               <Text
                 component="a"
                 href="/contact"
-                style={{ color: 'var(--mantine-color-blue-6)', textDecoration: 'underline' }}
+                style={{
+                  color: "var(--mantine-color-blue-6)",
+                  textDecoration: "underline",
+                }}
               >
                 contact support
               </Text>
@@ -114,4 +127,4 @@ export const NotFoundPage: React.FC = () => {
   );
 };
 
-export default NotFoundPage; 
+export default NotFoundPage;

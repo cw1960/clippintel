@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   TextInput,
   PasswordInput,
@@ -13,12 +13,17 @@ import {
   Group,
   Divider,
   LoadingOverlay,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconLogin, IconMail, IconLock } from '@tabler/icons-react';
-import { useAuth } from '../../stores/authStore';
-import type { SignInForm } from '../../types/user';
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconLogin,
+  IconMail,
+  IconLock,
+} from "@tabler/icons-react";
+import { useAuth } from "../../stores/authStore";
+import type { SignInForm } from "../../types/user";
 
 interface LoginFormProps {
   onSignUp?: () => void;
@@ -29,27 +34,27 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = ({
   onSignUp,
   onForgotPassword,
-  redirectTo = '/dashboard',
+  redirectTo = "/dashboard",
 }) => {
   const { signIn, loading, error, clearError } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignInForm>({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       remember_me: false,
     },
 
     validate: {
       email: (value) => {
-        if (!value) return 'Email is required';
-        if (!/^\S+@\S+$/.test(value)) return 'Invalid email format';
+        if (!value) return "Email is required";
+        if (!/^\S+@\S+$/.test(value)) return "Invalid email format";
         return null;
       },
       password: (value) => {
-        if (!value) return 'Password is required';
-        if (value.length < 6) return 'Password must be at least 6 characters';
+        if (!value) return "Password is required";
+        if (value.length < 6) return "Password must be at least 6 characters";
         return null;
       },
     },
@@ -67,9 +72,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       if (result.success) {
         notifications.show({
-          title: 'Welcome back!',
-          message: 'You have been successfully logged in.',
-          color: 'green',
+          title: "Welcome back!",
+          message: "You have been successfully logged in.",
+          color: "green",
           icon: <IconLogin size={16} />,
         });
 
@@ -79,18 +84,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         }
       } else {
         notifications.show({
-          title: 'Login Failed',
-          message: result.error?.message || 'Invalid email or password',
-          color: 'red',
+          title: "Login Failed",
+          message: result.error?.message || "Invalid email or password",
+          color: "red",
           icon: <IconAlertCircle size={16} />,
         });
       }
     } catch (err) {
-      console.error('Login error:', err);
+      console.error("Login error:", err);
       notifications.show({
-        title: 'Login Error',
-        message: 'An unexpected error occurred. Please try again.',
-        color: 'red',
+        title: "Login Error",
+        message: "An unexpected error occurred. Please try again.",
+        color: "red",
         icon: <IconAlertCircle size={16} />,
       });
     } finally {
@@ -103,9 +108,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       onForgotPassword();
     } else {
       notifications.show({
-        title: 'Forgot Password',
-        message: 'Please contact support to reset your password.',
-        color: 'blue',
+        title: "Forgot Password",
+        message: "Please contact support to reset your password.",
+        color: "blue",
       });
     }
   };
@@ -115,12 +120,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       shadow="md"
       p="xl"
       radius="md"
-      style={{ position: 'relative', width: '100%', maxWidth: 400 }}
+      style={{ position: "relative", width: "100%", maxWidth: 400 }}
     >
       <LoadingOverlay
         visible={loading || isSubmitting}
         overlayProps={{ blur: 1 }}
-        loaderProps={{ color: 'blue', type: 'oval' }}
+        loaderProps={{ color: "blue", type: "oval" }}
       />
 
       <Title order={2} ta="center" mb="md" c="white">
@@ -152,15 +157,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             placeholder="your@email.com"
             leftSection={<IconMail size={16} />}
             required
-            {...form.getInputProps('email')}
+            {...form.getInputProps("email")}
             styles={{
-              label: { color: 'white' },
+              label: { color: "white" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-7)',
-                borderColor: 'var(--mantine-color-dark-4)',
-                color: 'white',
-                '&:focus': {
-                  borderColor: 'var(--mantine-color-blue-5)',
+                backgroundColor: "var(--mantine-color-dark-7)",
+                borderColor: "var(--mantine-color-dark-4)",
+                color: "white",
+                "&:focus": {
+                  borderColor: "var(--mantine-color-blue-5)",
                 },
               },
             }}
@@ -171,20 +176,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             placeholder="Your password"
             leftSection={<IconLock size={16} />}
             required
-            {...form.getInputProps('password')}
+            {...form.getInputProps("password")}
             styles={{
-              label: { color: 'white' },
+              label: { color: "white" },
               input: {
-                backgroundColor: 'var(--mantine-color-dark-7)',
-                borderColor: 'var(--mantine-color-dark-4)',
-                color: 'white',
-                '&:focus': {
-                  borderColor: 'var(--mantine-color-blue-5)',
+                backgroundColor: "var(--mantine-color-dark-7)",
+                borderColor: "var(--mantine-color-dark-4)",
+                color: "white",
+                "&:focus": {
+                  borderColor: "var(--mantine-color-blue-5)",
                 },
               },
               innerInput: {
-                backgroundColor: 'transparent',
-                color: 'white',
+                backgroundColor: "transparent",
+                color: "white",
               },
             }}
           />
@@ -192,12 +197,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <Group justify="space-between" mt="xs">
             <Checkbox
               label="Remember me"
-              {...form.getInputProps('remember_me', { type: 'checkbox' })}
+              {...form.getInputProps("remember_me", { type: "checkbox" })}
               styles={{
-                label: { color: 'white' },
+                label: { color: "white" },
               }}
             />
-            <Anchor component="button" size="sm" onClick={handleForgotPassword} c="blue">
+            <Anchor
+              component="button"
+              size="sm"
+              onClick={handleForgotPassword}
+              c="blue"
+            >
               Forgot password?
             </Anchor>
           </Group>
@@ -217,11 +227,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <Divider my="lg" label="or" labelPosition="center" />
 
       <Text ta="center" size="sm">
-        Don't have an account?{' '}
+        Don't have an account?{" "}
         <Anchor component="button" onClick={onSignUp} c="blue">
           Sign up
         </Anchor>
       </Text>
     </Paper>
   );
-}; 
+};

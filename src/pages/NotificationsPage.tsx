@@ -1,8 +1,8 @@
-import { 
-  Container, 
-  Title, 
-  Text, 
-  Stack, 
+import {
+  Container,
+  Title,
+  Text,
+  Stack,
   Paper,
   Group,
   Button,
@@ -10,16 +10,16 @@ import {
   Switch,
   Divider,
   Tabs,
-} from '@mantine/core';
-import { IconBell, IconSettings, IconCheck, IconX } from '@tabler/icons-react';
-import { useActiveNavItem } from '../stores/layoutStore';
-import { useEffect } from 'react';
+} from "@mantine/core";
+import { IconBell, IconSettings, IconCheck, IconX } from "@tabler/icons-react";
+import { useActiveNavItem } from "../stores/layoutStore";
+import { useEffect } from "react";
 
 export const NotificationsPage: React.FC = () => {
   const { setActiveItem } = useActiveNavItem();
 
   useEffect(() => {
-    setActiveItem('notifications');
+    setActiveItem("notifications");
   }, [setActiveItem]);
 
   return (
@@ -53,53 +53,64 @@ export const NotificationsPage: React.FC = () => {
             <Stack gap="md">
               {[
                 {
-                  title: 'New Opportunity Found',
-                  message: 'AI Research Grant matching your criteria has been discovered',
-                  time: '5 minutes ago',
+                  title: "New Opportunity Found",
+                  message:
+                    "AI Research Grant matching your criteria has been discovered",
+                  time: "5 minutes ago",
                   read: false,
-                  type: 'opportunity'
+                  type: "opportunity",
                 },
                 {
-                  title: 'Deadline Reminder',
-                  message: 'Grant application due in 3 days',
-                  time: '30 minutes ago',
+                  title: "Deadline Reminder",
+                  message: "Grant application due in 3 days",
+                  time: "30 minutes ago",
                   read: false,
-                  type: 'reminder'
+                  type: "reminder",
                 },
                 {
-                  title: 'Profile Updated',
-                  message: 'Your profile has been successfully updated',
-                  time: '2 hours ago',
+                  title: "Profile Updated",
+                  message: "Your profile has been successfully updated",
+                  time: "2 hours ago",
                   read: true,
-                  type: 'system'
+                  type: "system",
                 },
                 {
-                  title: 'Weekly Report Ready',
-                  message: 'Your weekly opportunity report is ready for review',
-                  time: '1 day ago',
+                  title: "Weekly Report Ready",
+                  message: "Your weekly opportunity report is ready for review",
+                  time: "1 day ago",
                   read: true,
-                  type: 'report'
-                }
+                  type: "report",
+                },
               ].map((notification, index) => (
-                <Paper 
+                <Paper
                   key={index}
-                  p="md" 
-                  radius="md" 
-                  style={{ 
-                    border: '1px solid var(--mantine-color-default-border)',
-                    backgroundColor: notification.read ? 'transparent' : 'var(--mantine-color-blue-light)'
+                  p="md"
+                  radius="md"
+                  style={{
+                    border: "1px solid var(--mantine-color-default-border)",
+                    backgroundColor: notification.read
+                      ? "transparent"
+                      : "var(--mantine-color-blue-light)",
                   }}
                 >
                   <Group justify="space-between" align="flex-start">
                     <Stack gap="xs" style={{ flex: 1 }}>
                       <Group gap="sm">
-                        <Text fw={500} size="sm">{notification.title}</Text>
+                        <Text fw={500} size="sm">
+                          {notification.title}
+                        </Text>
                         {!notification.read && (
-                          <Badge size="xs" color="blue" variant="filled">New</Badge>
+                          <Badge size="xs" color="blue" variant="filled">
+                            New
+                          </Badge>
                         )}
                       </Group>
-                      <Text c="dimmed" size="sm">{notification.message}</Text>
-                      <Text c="dimmed" size="xs">{notification.time}</Text>
+                      <Text c="dimmed" size="sm">
+                        {notification.message}
+                      </Text>
+                      <Text c="dimmed" size="xs">
+                        {notification.time}
+                      </Text>
                     </Stack>
                     <Group gap="xs">
                       {!notification.read && (
@@ -122,7 +133,9 @@ export const NotificationsPage: React.FC = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="opportunities" pt="md">
-            <Text c="dimmed">Opportunity notifications will appear here...</Text>
+            <Text c="dimmed">
+              Opportunity notifications will appear here...
+            </Text>
           </Tabs.Panel>
 
           <Tabs.Panel value="system" pt="md">
@@ -131,7 +144,11 @@ export const NotificationsPage: React.FC = () => {
         </Tabs>
 
         {/* Notification Settings */}
-        <Paper p="xl" radius="md" style={{ border: '1px solid var(--mantine-color-default-border)' }}>
+        <Paper
+          p="xl"
+          radius="md"
+          style={{ border: "1px solid var(--mantine-color-default-border)" }}
+        >
           <Stack gap="md">
             <Title order={3}>Notification Settings</Title>
             <Divider />
@@ -139,28 +156,36 @@ export const NotificationsPage: React.FC = () => {
               <Group justify="space-between">
                 <Stack gap={0}>
                   <Text fw={500}>Email Notifications</Text>
-                  <Text size="sm" c="dimmed">Receive notifications via email</Text>
+                  <Text size="sm" c="dimmed">
+                    Receive notifications via email
+                  </Text>
                 </Stack>
                 <Switch defaultChecked />
               </Group>
               <Group justify="space-between">
                 <Stack gap={0}>
                   <Text fw={500}>New Opportunities</Text>
-                  <Text size="sm" c="dimmed">Get notified when new matching opportunities are found</Text>
+                  <Text size="sm" c="dimmed">
+                    Get notified when new matching opportunities are found
+                  </Text>
                 </Stack>
                 <Switch defaultChecked />
               </Group>
               <Group justify="space-between">
                 <Stack gap={0}>
                   <Text fw={500}>Deadline Reminders</Text>
-                  <Text size="sm" c="dimmed">Receive reminders for upcoming deadlines</Text>
+                  <Text size="sm" c="dimmed">
+                    Receive reminders for upcoming deadlines
+                  </Text>
                 </Stack>
                 <Switch defaultChecked />
               </Group>
               <Group justify="space-between">
                 <Stack gap={0}>
                   <Text fw={500}>Weekly Reports</Text>
-                  <Text size="sm" c="dimmed">Get weekly summary reports</Text>
+                  <Text size="sm" c="dimmed">
+                    Get weekly summary reports
+                  </Text>
                 </Stack>
                 <Switch />
               </Group>
@@ -172,4 +197,4 @@ export const NotificationsPage: React.FC = () => {
   );
 };
 
-export default NotificationsPage; 
+export default NotificationsPage;

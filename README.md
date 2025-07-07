@@ -25,29 +25,34 @@ An intelligent opportunity monitoring platform built with React, TypeScript, and
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/cw1960/clippintel.git
 cd clippintel
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env
 ```
+
 Edit `.env` with your Supabase credentials.
 
 4. Start the development server:
+
 ```bash
 npm run dev
 ```

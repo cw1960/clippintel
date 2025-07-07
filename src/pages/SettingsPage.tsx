@@ -1,8 +1,8 @@
-import { 
-  Container, 
-  Title, 
-  Text, 
-  Stack, 
+import {
+  Container,
+  Title,
+  Text,
+  Stack,
   Paper,
   Group,
   Button,
@@ -13,16 +13,22 @@ import {
   Select,
   PasswordInput,
   Textarea,
-} from '@mantine/core';
-import { IconSettings, IconUser, IconBell, IconShield, IconPalette } from '@tabler/icons-react';
-import { useActiveNavItem } from '../stores/layoutStore';
-import { useEffect } from 'react';
+} from "@mantine/core";
+import {
+  IconSettings,
+  IconUser,
+  IconBell,
+  IconShield,
+  IconPalette,
+} from "@tabler/icons-react";
+import { useActiveNavItem } from "../stores/layoutStore";
+import { useEffect } from "react";
 
 export const SettingsPage: React.FC = () => {
   const { setActiveItem } = useActiveNavItem();
 
   useEffect(() => {
-    setActiveItem('settings');
+    setActiveItem("settings");
   }, [setActiveItem]);
 
   return (
@@ -44,19 +50,31 @@ export const SettingsPage: React.FC = () => {
             <Tabs.Tab value="profile" leftSection={<IconUser size={16} />}>
               Profile
             </Tabs.Tab>
-            <Tabs.Tab value="notifications" leftSection={<IconBell size={16} />}>
+            <Tabs.Tab
+              value="notifications"
+              leftSection={<IconBell size={16} />}
+            >
               Notifications
             </Tabs.Tab>
             <Tabs.Tab value="security" leftSection={<IconShield size={16} />}>
               Security
             </Tabs.Tab>
-            <Tabs.Tab value="appearance" leftSection={<IconPalette size={16} />}>
+            <Tabs.Tab
+              value="appearance"
+              leftSection={<IconPalette size={16} />}
+            >
               Appearance
             </Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="profile" pt="md">
-            <Paper p="xl" radius="md" style={{ border: '1px solid var(--mantine-color-default-border)' }}>
+            <Paper
+              p="xl"
+              radius="md"
+              style={{
+                border: "1px solid var(--mantine-color-default-border)",
+              }}
+            >
               <Stack gap="md">
                 <Title order={3}>Profile Information</Title>
                 <Divider />
@@ -100,7 +118,13 @@ export const SettingsPage: React.FC = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="notifications" pt="md">
-            <Paper p="xl" radius="md" style={{ border: '1px solid var(--mantine-color-default-border)' }}>
+            <Paper
+              p="xl"
+              radius="md"
+              style={{
+                border: "1px solid var(--mantine-color-default-border)",
+              }}
+            >
               <Stack gap="md">
                 <Title order={3}>Notification Preferences</Title>
                 <Divider />
@@ -108,28 +132,36 @@ export const SettingsPage: React.FC = () => {
                   <Group justify="space-between">
                     <Stack gap={0}>
                       <Text fw={500}>Email Notifications</Text>
-                      <Text size="sm" c="dimmed">Receive notifications via email</Text>
+                      <Text size="sm" c="dimmed">
+                        Receive notifications via email
+                      </Text>
                     </Stack>
                     <Switch defaultChecked />
                   </Group>
                   <Group justify="space-between">
                     <Stack gap={0}>
                       <Text fw={500}>Desktop Notifications</Text>
-                      <Text size="sm" c="dimmed">Show browser notifications</Text>
+                      <Text size="sm" c="dimmed">
+                        Show browser notifications
+                      </Text>
                     </Stack>
                     <Switch />
                   </Group>
                   <Group justify="space-between">
                     <Stack gap={0}>
                       <Text fw={500}>Opportunity Alerts</Text>
-                      <Text size="sm" c="dimmed">Get notified of new matching opportunities</Text>
+                      <Text size="sm" c="dimmed">
+                        Get notified of new matching opportunities
+                      </Text>
                     </Stack>
                     <Switch defaultChecked />
                   </Group>
                   <Group justify="space-between">
                     <Stack gap={0}>
                       <Text fw={500}>Weekly Digest</Text>
-                      <Text size="sm" c="dimmed">Receive weekly summary reports</Text>
+                      <Text size="sm" c="dimmed">
+                        Receive weekly summary reports
+                      </Text>
                     </Stack>
                     <Switch defaultChecked />
                   </Group>
@@ -137,9 +169,9 @@ export const SettingsPage: React.FC = () => {
                     label="Email Frequency"
                     placeholder="Select frequency"
                     data={[
-                      { value: 'immediate', label: 'Immediate' },
-                      { value: 'daily', label: 'Daily Digest' },
-                      { value: 'weekly', label: 'Weekly Digest' },
+                      { value: "immediate", label: "Immediate" },
+                      { value: "daily", label: "Daily Digest" },
+                      { value: "weekly", label: "Weekly Digest" },
                     ]}
                     defaultValue="daily"
                   />
@@ -152,7 +184,13 @@ export const SettingsPage: React.FC = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="security" pt="md">
-            <Paper p="xl" radius="md" style={{ border: '1px solid var(--mantine-color-default-border)' }}>
+            <Paper
+              p="xl"
+              radius="md"
+              style={{
+                border: "1px solid var(--mantine-color-default-border)",
+              }}
+            >
               <Stack gap="md">
                 <Title order={3}>Security Settings</Title>
                 <Divider />
@@ -177,16 +215,24 @@ export const SettingsPage: React.FC = () => {
                   <Group justify="space-between">
                     <Stack gap={0}>
                       <Text fw={500}>Two-Factor Authentication</Text>
-                      <Text size="sm" c="dimmed">Add an extra layer of security to your account</Text>
+                      <Text size="sm" c="dimmed">
+                        Add an extra layer of security to your account
+                      </Text>
                     </Stack>
-                    <Button variant="outline" size="sm">Enable 2FA</Button>
+                    <Button variant="outline" size="sm">
+                      Enable 2FA
+                    </Button>
                   </Group>
                   <Group justify="space-between">
                     <Stack gap={0}>
                       <Text fw={500}>Login Sessions</Text>
-                      <Text size="sm" c="dimmed">Manage your active login sessions</Text>
+                      <Text size="sm" c="dimmed">
+                        Manage your active login sessions
+                      </Text>
                     </Stack>
-                    <Button variant="outline" size="sm">View Sessions</Button>
+                    <Button variant="outline" size="sm">
+                      View Sessions
+                    </Button>
                   </Group>
                 </Stack>
                 <Group justify="flex-end">
@@ -197,7 +243,13 @@ export const SettingsPage: React.FC = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="appearance" pt="md">
-            <Paper p="xl" radius="md" style={{ border: '1px solid var(--mantine-color-default-border)' }}>
+            <Paper
+              p="xl"
+              radius="md"
+              style={{
+                border: "1px solid var(--mantine-color-default-border)",
+              }}
+            >
               <Stack gap="md">
                 <Title order={3}>Appearance Settings</Title>
                 <Divider />
@@ -206,9 +258,9 @@ export const SettingsPage: React.FC = () => {
                     label="Theme"
                     placeholder="Select theme"
                     data={[
-                      { value: 'auto', label: 'Auto (System)' },
-                      { value: 'light', label: 'Light' },
-                      { value: 'dark', label: 'Dark' },
+                      { value: "auto", label: "Auto (System)" },
+                      { value: "light", label: "Light" },
+                      { value: "dark", label: "Dark" },
                     ]}
                     defaultValue="dark"
                   />
@@ -216,9 +268,9 @@ export const SettingsPage: React.FC = () => {
                     label="Language"
                     placeholder="Select language"
                     data={[
-                      { value: 'en', label: 'English' },
-                      { value: 'es', label: 'Español' },
-                      { value: 'fr', label: 'Français' },
+                      { value: "en", label: "English" },
+                      { value: "es", label: "Español" },
+                      { value: "fr", label: "Français" },
                     ]}
                     defaultValue="en"
                   />
@@ -226,16 +278,18 @@ export const SettingsPage: React.FC = () => {
                     label="Date Format"
                     placeholder="Select date format"
                     data={[
-                      { value: 'mm/dd/yyyy', label: 'MM/DD/YYYY' },
-                      { value: 'dd/mm/yyyy', label: 'DD/MM/YYYY' },
-                      { value: 'yyyy-mm-dd', label: 'YYYY-MM-DD' },
+                      { value: "mm/dd/yyyy", label: "MM/DD/YYYY" },
+                      { value: "dd/mm/yyyy", label: "DD/MM/YYYY" },
+                      { value: "yyyy-mm-dd", label: "YYYY-MM-DD" },
                     ]}
                     defaultValue="mm/dd/yyyy"
                   />
                   <Group justify="space-between">
                     <Stack gap={0}>
                       <Text fw={500}>Compact Mode</Text>
-                      <Text size="sm" c="dimmed">Show more information in less space</Text>
+                      <Text size="sm" c="dimmed">
+                        Show more information in less space
+                      </Text>
                     </Stack>
                     <Switch />
                   </Group>
@@ -252,4 +306,4 @@ export const SettingsPage: React.FC = () => {
   );
 };
 
-export default SettingsPage; 
+export default SettingsPage;

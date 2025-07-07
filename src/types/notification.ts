@@ -9,19 +9,19 @@ export interface Notification {
   createdAt: Date;
   readAt?: Date;
   expiresAt?: Date;
-  
+
   // Related entities
-  entityType?: 'opportunity' | 'user' | 'criteria' | 'system';
+  entityType?: "opportunity" | "user" | "criteria" | "system";
   entityId?: string;
-  
+
   // Action data
   action?: {
-    type: 'view' | 'apply' | 'dismiss' | 'snooze' | 'mark_read';
+    type: "view" | "apply" | "dismiss" | "snooze" | "mark_read";
     url?: string;
     label?: string;
     data?: Record<string, any>;
   };
-  
+
   // Metadata
   metadata?: {
     source?: string;
@@ -36,47 +36,47 @@ export interface Notification {
 
 export enum NotificationType {
   // Opportunity related
-  NEW_OPPORTUNITY = 'new_opportunity',
-  OPPORTUNITY_MATCH = 'opportunity_match',
-  OPPORTUNITY_UPDATED = 'opportunity_updated',
-  OPPORTUNITY_EXPIRED = 'opportunity_expired',
-  DEADLINE_REMINDER = 'deadline_reminder',
-  APPLICATION_STATUS = 'application_status',
-  
+  NEW_OPPORTUNITY = "new_opportunity",
+  OPPORTUNITY_MATCH = "opportunity_match",
+  OPPORTUNITY_UPDATED = "opportunity_updated",
+  OPPORTUNITY_EXPIRED = "opportunity_expired",
+  DEADLINE_REMINDER = "deadline_reminder",
+  APPLICATION_STATUS = "application_status",
+
   // Criteria related
-  CRITERIA_MATCH = 'criteria_match',
-  CRITERIA_UPDATED = 'criteria_updated',
-  
+  CRITERIA_MATCH = "criteria_match",
+  CRITERIA_UPDATED = "criteria_updated",
+
   // System related
-  SYSTEM_UPDATE = 'system_update',
-  MAINTENANCE = 'maintenance',
-  FEATURE_ANNOUNCEMENT = 'feature_announcement',
-  
+  SYSTEM_UPDATE = "system_update",
+  MAINTENANCE = "maintenance",
+  FEATURE_ANNOUNCEMENT = "feature_announcement",
+
   // Account related
-  ACCOUNT_ACTIVITY = 'account_activity',
-  SECURITY_ALERT = 'security_alert',
-  SUBSCRIPTION_UPDATE = 'subscription_update',
-  
+  ACCOUNT_ACTIVITY = "account_activity",
+  SECURITY_ALERT = "security_alert",
+  SUBSCRIPTION_UPDATE = "subscription_update",
+
   // Social related
-  TEAM_INVITATION = 'team_invitation',
-  TEAM_UPDATE = 'team_update',
-  USER_MENTION = 'user_mention',
-  
+  TEAM_INVITATION = "team_invitation",
+  TEAM_UPDATE = "team_update",
+  USER_MENTION = "user_mention",
+
   // Custom
-  CUSTOM = 'custom',
+  CUSTOM = "custom",
 }
 
 export enum NotificationPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  URGENT = "urgent",
 }
 
 export interface NotificationChannel {
   id: string;
   userId: string;
-  type: 'email' | 'push' | 'sms' | 'webhook' | 'slack' | 'discord';
+  type: "email" | "push" | "sms" | "webhook" | "slack" | "discord";
   name: string;
   isActive: boolean;
   config: {
@@ -84,9 +84,9 @@ export interface NotificationChannel {
     email?: {
       address: string;
       template?: string;
-      frequency: 'immediate' | 'daily' | 'weekly';
+      frequency: "immediate" | "daily" | "weekly";
     };
-    
+
     // Push config
     push?: {
       endpoint: string;
@@ -97,22 +97,22 @@ export interface NotificationChannel {
       sound?: boolean;
       vibration?: boolean;
     };
-    
+
     // SMS config
     sms?: {
       phoneNumber: string;
-      provider: 'twilio' | 'aws' | 'custom';
+      provider: "twilio" | "aws" | "custom";
       template?: string;
     };
-    
+
     // Webhook config
     webhook?: {
       url: string;
-      method: 'POST' | 'PUT' | 'PATCH';
+      method: "POST" | "PUT" | "PATCH";
       headers?: Record<string, string>;
       secret?: string;
     };
-    
+
     // Slack config
     slack?: {
       webhookUrl: string;
@@ -120,7 +120,7 @@ export interface NotificationChannel {
       username?: string;
       iconEmoji?: string;
     };
-    
+
     // Discord config
     discord?: {
       webhookUrl: string;
@@ -128,7 +128,7 @@ export interface NotificationChannel {
       avatarUrl?: string;
     };
   };
-  
+
   createdAt: Date;
   updatedAt: Date;
   lastUsedAt?: Date;
@@ -141,13 +141,13 @@ export interface NotificationRule {
   description?: string;
   isActive: boolean;
   priority: number;
-  
+
   // Conditions
   conditions: {
     types: NotificationType[];
     priorities: NotificationPriority[];
     entities?: {
-      type: 'opportunity' | 'user' | 'criteria';
+      type: "opportunity" | "user" | "criteria";
       ids?: string[];
       categories?: string[];
       tags?: string[];
@@ -159,13 +159,13 @@ export interface NotificationRule {
       days: number[]; // 0-6, Sunday = 0
     };
     frequency?: {
-      type: 'immediate' | 'batched' | 'scheduled';
+      type: "immediate" | "batched" | "scheduled";
       interval?: number; // in minutes
       maxPerHour?: number;
       maxPerDay?: number;
     };
   };
-  
+
   // Actions
   actions: {
     channels: string[]; // NotificationChannel ids
@@ -178,12 +178,12 @@ export interface NotificationRule {
     };
     grouping?: {
       enabled: boolean;
-      field: 'type' | 'entity' | 'category';
+      field: "type" | "entity" | "category";
       maxSize: number;
       timeout: number; // in minutes
     };
   };
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -193,34 +193,34 @@ export interface NotificationTemplate {
   name: string;
   description?: string;
   type: NotificationType;
-  channel: 'email' | 'push' | 'sms' | 'webhook' | 'slack' | 'discord';
+  channel: "email" | "push" | "sms" | "webhook" | "slack" | "discord";
   language: string;
-  
+
   // Template content
   content: {
     subject?: string; // for email
     title: string;
     body: string;
     footer?: string;
-    
+
     // Rich content
     html?: string; // for email
     markdown?: string;
-    
+
     // Media
     imageUrl?: string;
     iconUrl?: string;
-    
+
     // Interactive elements
     buttons?: {
       text: string;
       url: string;
-      style: 'primary' | 'secondary' | 'danger';
+      style: "primary" | "secondary" | "danger";
     }[];
-    
+
     // Variables
     variables?: string[];
-    
+
     // Styling
     style?: {
       color?: string;
@@ -230,7 +230,7 @@ export interface NotificationTemplate {
       fontWeight?: string;
     };
   };
-  
+
   isDefault: boolean;
   createdBy: string;
   createdAt: Date;
@@ -240,22 +240,22 @@ export interface NotificationTemplate {
 export interface NotificationBatch {
   id: string;
   userId: string;
-  type: 'scheduled' | 'grouped' | 'digest';
+  type: "scheduled" | "grouped" | "digest";
   notifications: string[]; // notification ids
-  status: 'pending' | 'processing' | 'sent' | 'failed';
+  status: "pending" | "processing" | "sent" | "failed";
   scheduledFor: Date;
   sentAt?: Date;
-  
+
   // Batch config
   config: {
     channel: string; // NotificationChannel id
     template?: string;
-    groupBy?: 'type' | 'entity' | 'category';
+    groupBy?: "type" | "entity" | "category";
     maxSize: number;
     subject?: string;
     title?: string;
   };
-  
+
   // Delivery info
   delivery?: {
     attempts: number;
@@ -263,7 +263,7 @@ export interface NotificationBatch {
     error?: string;
     response?: any;
   };
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -280,7 +280,7 @@ export interface NotificationPreference {
     slack: boolean;
     discord: boolean;
   };
-  frequency: 'immediate' | 'daily' | 'weekly' | 'monthly' | 'never';
+  frequency: "immediate" | "daily" | "weekly" | "monthly" | "never";
   quietHours?: {
     enabled: boolean;
     start: string; // HH:MM format
@@ -303,23 +303,23 @@ export interface NotificationAnalytics {
     start: Date;
     end: Date;
   };
-  
+
   // Counts
   total: number;
   byType: Record<NotificationType, number>;
   byPriority: Record<NotificationPriority, number>;
   byChannel: Record<string, number>;
-  
+
   // Engagement
   readRate: number;
   clickRate: number;
   unsubscribeRate: number;
-  
+
   // Delivery
   deliveryRate: number;
   failureRate: number;
   averageDeliveryTime: number;
-  
+
   // Trends
   dailyTrends: {
     date: Date;
@@ -328,7 +328,7 @@ export interface NotificationAnalytics {
     clicked: number;
     failed: number;
   }[];
-  
+
   // Top performing
   topTypes: {
     type: NotificationType;
@@ -336,11 +336,11 @@ export interface NotificationAnalytics {
     readRate: number;
     clickRate: number;
   }[];
-  
+
   topChannels: {
     channel: string;
     count: number;
     deliveryRate: number;
     readRate: number;
   }[];
-} 
+}
