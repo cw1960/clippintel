@@ -1,19 +1,15 @@
 import React from 'react';
 import {
   Container,
-  Paper,
   Stack,
   Group,
   Text,
   Title,
   Box,
-  Image,
   Center,
-  Anchor,
   Divider,
   Grid,
   useMatches,
-  rem,
 } from '@mantine/core';
 import { IconBrain, IconTargetArrow, IconShieldCheck } from '@tabler/icons-react';
 

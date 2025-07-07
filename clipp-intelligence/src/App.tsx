@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell, Title, Text, Container } from '@mantine/core';
 import { useAuthStore } from './stores/authStore';
