@@ -34,44 +34,28 @@ export interface Notification {
   };
 }
 
-export enum NotificationType {
-  // Opportunity related
-  NEW_OPPORTUNITY = "new_opportunity",
-  OPPORTUNITY_MATCH = "opportunity_match",
-  OPPORTUNITY_UPDATED = "opportunity_updated",
-  OPPORTUNITY_EXPIRED = "opportunity_expired",
-  DEADLINE_REMINDER = "deadline_reminder",
-  APPLICATION_STATUS = "application_status",
+// Replace enums with union types
+export type NotificationType =
+  | "new_opportunity"
+  | "opportunity_match"
+  | "opportunity_updated"
+  | "opportunity_expired"
+  | "deadline_reminder"
+  | "application_status"
+  | "criteria_match"
+  | "criteria_updated"
+  | "system_update"
+  | "maintenance"
+  | "feature_announcement"
+  | "account_activity"
+  | "security_alert"
+  | "subscription_update"
+  | "team_invitation"
+  | "team_update"
+  | "user_mention"
+  | "custom";
 
-  // Criteria related
-  CRITERIA_MATCH = "criteria_match",
-  CRITERIA_UPDATED = "criteria_updated",
-
-  // System related
-  SYSTEM_UPDATE = "system_update",
-  MAINTENANCE = "maintenance",
-  FEATURE_ANNOUNCEMENT = "feature_announcement",
-
-  // Account related
-  ACCOUNT_ACTIVITY = "account_activity",
-  SECURITY_ALERT = "security_alert",
-  SUBSCRIPTION_UPDATE = "subscription_update",
-
-  // Social related
-  TEAM_INVITATION = "team_invitation",
-  TEAM_UPDATE = "team_update",
-  USER_MENTION = "user_mention",
-
-  // Custom
-  CUSTOM = "custom",
-}
-
-export enum NotificationPriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  URGENT = "urgent",
-}
+export type NotificationPriority = "low" | "medium" | "high" | "urgent";
 
 export interface NotificationChannel {
   id: string;

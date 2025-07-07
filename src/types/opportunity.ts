@@ -31,15 +31,14 @@ export interface Opportunity {
   };
 }
 
-export enum OpportunityStatus {
-  NEW = "new",
-  REVIEWED = "reviewed",
-  APPLIED = "applied",
-  REJECTED = "rejected",
-  ACCEPTED = "accepted",
-  EXPIRED = "expired",
-  ARCHIVED = "archived",
-}
+export type OpportunityStatus =
+  | "new"
+  | "reviewed"
+  | "applied"
+  | "rejected"
+  | "accepted"
+  | "expired"
+  | "archived";
 
 export interface OpportunityFilter {
   category?: string | null;
