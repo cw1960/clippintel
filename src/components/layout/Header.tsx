@@ -110,22 +110,32 @@ export const Header: React.FC<HeaderProps> = ({
         <Group gap="xs">
           <Box
             style={{
-              width: 32,
-              height: 32,
+              width: 40,
+              height: 40,
               borderRadius: "50%",
               background:
-                "linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-cyan-5))",
+                "linear-gradient(135deg, #F5422E 0%, #36A4A0 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              overflow: "hidden",
             }}
           >
-            <IconBrain size={20} color="white" />
+            <img
+              src="https://i.imgur.com/Bg1YnEg.png"
+              alt="Clipp Intelligence Logo"
+              style={{ width: 32, height: 32, objectFit: "contain" }}
+            />
           </Box>
           {!isMobile && (
-            <Text size="lg" fw={700} c="var(--mantine-color-text)">
-              {title}
-            </Text>
+            <Box>
+              <Text size="lg" fw={700} c="var(--mantine-color-text)">
+                Clipp Intelligence
+              </Text>
+              <Text size="xs" c="dimmed" fw={500}>
+                Intelligent Opportunity Discovery for Whop Content Clippers
+              </Text>
+            </Box>
           )}
         </Group>
       </Group>

@@ -72,6 +72,18 @@ export const theme = createTheme({
       "#23262B",
       "#23262B",
     ],
+    blue: [
+      "#E3F2FD",
+      "#BBDEFB",
+      "#90CAF9",
+      "#64B5F6",
+      "#42A5F5",
+      "#1976d2", // Button Blue
+      "#1565C0",
+      "#0D47A1",
+      "#0B3C91",
+      "#082567",
+    ],
   },
   components: {
     AppShell: {
