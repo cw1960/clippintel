@@ -16,6 +16,7 @@ import {
   IconTargetArrow,
   IconShieldCheck,
 } from "@tabler/icons-react";
+import logo from '../../assets/logo.png';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -26,8 +27,8 @@ interface AuthLayoutProps {
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({
   children,
-  title = "ClippIntell",
-  subtitle = "Intelligent Opportunity Discovery",
+  title = "Clipp Intelligence",
+  subtitle = "Intelligent Opportunity Discovery for Whop Content Clippers",
   showFeatures = true,
 }) => {
   const isMobile = useMatches({
@@ -37,21 +38,21 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
 
   const features = [
     {
-      icon: <IconBrain size={24} />,
-      title: "AI-Powered Matching",
+      icon: <IconBrain size={24} />, // Optionally replace with a Whop/content icon
+      title: "AI-Powered Whop Matching",
       description:
-        "Smart algorithms find opportunities that match your criteria",
+        "Smart algorithms instantly find Whop content reward opportunities that match your criteria.",
     },
     {
       icon: <IconTargetArrow size={24} />,
-      title: "Precision Filtering",
+      title: "Content-Focused Filters",
       description:
-        "Advanced filters help you focus on the most relevant opportunities",
+        "Advanced filters help you focus on the most profitable and relevant Whop opportunities.",
     },
     {
       icon: <IconShieldCheck size={24} />,
       title: "Secure & Private",
-      description: "Your data is protected with enterprise-grade security",
+      description: "Your data is protected with enterprise-grade security.",
     },
   ];
 
@@ -81,13 +82,14 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
                         height: 60,
                         borderRadius: "50%",
                         background:
-                          "linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-cyan-5))",
+                          "linear-gradient(135deg, #F5422E 0%, #36A4A0 100%)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        overflow: "hidden",
                       }}
                     >
-                      <IconBrain size={32} color="white" />
+                      <img src="https://i.imgur.com/Bg1YnEg.png" alt="Clipp Intelligence Logo" style={{ width: 40, height: 40, objectFit: 'contain' }} />
                     </Box>
                     <Box>
                       <Title order={1} c="white" fw={700}>
@@ -100,9 +102,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
                   </Group>
 
                   <Text c="gray.3" size="lg" lh={1.6}>
-                    Discover and track opportunities with intelligent matching.
-                    ClippIntell helps you find the perfect grants, contracts,
-                    and business opportunities tailored to your criteria.
+                    Discover and track Whop content reward opportunities with intelligent matching. Clipp Intelligence helps content clippers automate finding and filtering the best Whop.com opportunities—never miss a profitable content reward again.
                   </Text>
                 </Box>
 
@@ -112,7 +112,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
                     <Divider
                       label={
                         <Text c="dimmed" fw={500}>
-                          Why Choose ClippIntell?
+                          Why Choose Clipp Intelligence?
                         </Text>
                       }
                       labelPosition="left"
