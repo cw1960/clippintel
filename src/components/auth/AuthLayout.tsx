@@ -1,16 +1,19 @@
 import React from 'react';
 import {
   Container,
+  Paper,
   Stack,
   Group,
   Text,
   Title,
   Box,
+  Image,
   Center,
   Anchor,
   Divider,
   Grid,
   useMatches,
+  rem,
 } from '@mantine/core';
 import { IconBrain, IconTargetArrow, IconShieldCheck } from '@tabler/icons-react';
 
@@ -203,29 +206,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
                     </Group>
                   </Box>
                 )}
-
-                {/* Auth Form */}
                 {children}
-
-                {/* Footer Links */}
-                <Group justify="center" gap="md" mt="xl">
-                  <Anchor c="dimmed" size="sm" href="/help">
-                    Help & Support
-                  </Anchor>
-                  <Text c="dark.2" size="sm">•</Text>
-                  <Anchor c="dimmed" size="sm" href="/privacy">
-                    Privacy Policy
-                  </Anchor>
-                  <Text c="dark.2" size="sm">•</Text>
-                  <Anchor c="dimmed" size="sm" href="/terms">
-                    Terms of Service
-                  </Anchor>
-                </Group>
-
-                {/* Copyright */}
-                <Text c="dark.2" size="xs" ta="center" mt="md">
-                  © 2024 ClippIntell. All rights reserved.
-                </Text>
               </Box>
             </Center>
           </Grid.Col>
@@ -233,6 +214,4 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
       </Container>
     </Box>
   );
-};
-
-export default AuthLayout; 
+}; 

@@ -1,23 +1,39 @@
+import React, { useEffect } from 'react';
 import { Container, Title, Text, Stack, Paper, Grid, Group, Button, Badge, Progress } from '@mantine/core';
-import { IconDashboard, IconTargetArrow, IconBell, IconTrendingUp, IconCalendarEvent } from '@tabler/icons-react';
+import { IconDashboard, IconTargetArrow, IconBell, IconTrendingUp, IconCalendarEvent, IconLogout } from '@tabler/icons-react';
 import { useActiveNavItem } from '../stores/layoutStore';
-import { useEffect } from 'react';
+import { useAuth } from '../components/auth';
 
 export const DashboardPage: React.FC = () => {
-  const { setActiveItem } = useActiveNavItem();
+  const { setActiveItem } = useActiveNavItem ? useActiveNavItem() : { setActiveItem: () => {} };
+  const { user, profile, signOut } = useAuth ? useAuth() : { user: null, profile: null, signOut: async () => {} };
 
   useEffect(() => {
-    setActiveItem('dashboard');
+    if (setActiveItem) setActiveItem('dashboard');
   }, [setActiveItem]);
+
+  const handleLogout = async () => {
+    if (signOut) await signOut();
+  };
 
   return (
     <Container size="xl">
       <Stack gap="xl">
         {/* Page Header */}
         <Stack gap="xs">
-          <Group gap="sm">
-            <IconDashboard size={32} color="var(--mantine-color-blue-6)" />
-            <Title order={1}>Dashboard</Title>
+          <Group gap="sm" justify="space-between">
+            <Group gap="sm">
+              <IconDashboard size={32} color="var(--mantine-color-blue-6)" />
+              <Title order={1}>Dashboard</Title>
+            </Group>
+            <Button
+              variant="light"
+              color="red"
+              leftSection={<IconLogout size={16} />}
+              onClick={handleLogout}
+            >
+              Sign Out
+            </Button>
           </Group>
           <Text c="dimmed" size="lg">
             Welcome to your ClippIntell dashboard! Monitor opportunities and track your success.
@@ -34,7 +50,7 @@ export const DashboardPage: React.FC = () => {
                   <IconTargetArrow size={16} color="var(--mantine-color-blue-6)" />
                 </Group>
                 <Text size="xl" fw={700} c="blue">24</Text>
-                <Text size="xs" c="green">↑ 12% from last week</Text>
+                <Text size="xs" c="green"> 12% from last week</Text>
               </Stack>
             </Paper>
           </Grid.Col>
@@ -46,7 +62,7 @@ export const DashboardPage: React.FC = () => {
                   <IconTrendingUp size={16} color="var(--mantine-color-green-6)" />
                 </Group>
                 <Text size="xl" fw={700} c="green">87%</Text>
-                <Text size="xs" c="green">↑ 5% improvement</Text>
+                <Text size="xs" c="green"> 15% improvement</Text>
               </Stack>
             </Paper>
           </Grid.Col>
@@ -160,6 +176,4 @@ export const DashboardPage: React.FC = () => {
       </Stack>
     </Container>
   );
-};
-
-export default DashboardPage; 
+}; 

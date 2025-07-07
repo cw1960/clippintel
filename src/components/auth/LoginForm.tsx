@@ -194,25 +194,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               label="Remember me"
               {...form.getInputProps('remember_me', { type: 'checkbox' })}
               styles={{
-                label: { color: 'var(--mantine-color-gray-3)' },
-                input: {
-                  backgroundColor: 'var(--mantine-color-dark-7)',
-                  borderColor: 'var(--mantine-color-dark-4)',
-                  '&:checked': {
-                    backgroundColor: 'var(--mantine-color-blue-5)',
-                    borderColor: 'var(--mantine-color-blue-5)',
-                  },
-                },
+                label: { color: 'white' },
               }}
             />
-
-            <Anchor
-              component="button"
-              type="button"
-              c="blue"
-              size="sm"
-              onClick={handleForgotPassword}
-            >
+            <Anchor component="button" size="sm" onClick={handleForgotPassword} c="blue">
               Forgot password?
             </Anchor>
           </Group>
@@ -220,43 +205,23 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <Button
             type="submit"
             fullWidth
-            size="md"
-            loading={loading || isSubmitting}
+            loading={isSubmitting}
             leftSection={<IconLogin size={16} />}
-            styles={{
-              root: {
-                backgroundColor: 'var(--mantine-color-blue-6)',
-                '&:hover': {
-                  backgroundColor: 'var(--mantine-color-blue-7)',
-                },
-                '&:disabled': {
-                  backgroundColor: 'var(--mantine-color-dark-5)',
-                  color: 'var(--mantine-color-dark-2)',
-                },
-              },
-            }}
+            mt="md"
           >
-            {loading || isSubmitting ? 'Signing in...' : 'Sign In'}
+            Sign In
           </Button>
         </Stack>
       </form>
 
-      <Divider label="or" labelPosition="center" my="lg" />
+      <Divider my="lg" label="or" labelPosition="center" />
 
-      <Text c="dimmed" size="sm" ta="center">
+      <Text ta="center" size="sm">
         Don't have an account?{' '}
-        <Anchor
-          component="button"
-          type="button"
-          c="blue"
-          fw={500}
-          onClick={onSignUp}
-        >
-          Create account
+        <Anchor component="button" onClick={onSignUp} c="blue">
+          Sign up
         </Anchor>
       </Text>
     </Paper>
   );
-};
-
-export default LoginForm; 
+}; 

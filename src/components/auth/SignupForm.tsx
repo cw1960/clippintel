@@ -10,7 +10,7 @@ import {
   Anchor,
   Alert,
   Stack,
-
+  Group,
   Divider,
   LoadingOverlay,
   Progress,
@@ -191,19 +191,16 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         overlayProps={{ blur: 1 }}
         loaderProps={{ color: 'blue', type: 'oval' }}
       />
-
       <Title order={2} ta="center" mb="md" c="white">
         Create Account
       </Title>
-
       <Text c="dimmed" size="sm" ta="center" mb="xl">
-        Join ClippIntell and discover opportunities
+        Sign up for a new ClippIntell account
       </Text>
-
       {error && (
         <Alert
           icon={<IconAlertCircle size={16} />}
-          title="Registration Error"
+          title="Signup Error"
           color="red"
           mb="md"
           variant="filled"
@@ -213,12 +210,11 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           {error}
         </Alert>
       )}
-
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
           <TextInput
             label="Full Name"
-            placeholder="John Doe"
+            placeholder="Your full name"
             leftSection={<IconUser size={16} />}
             required
             {...form.getInputProps('full_name')}
@@ -234,7 +230,6 @@ export const SignupForm: React.FC<SignupFormProps> = ({
               },
             }}
           />
-
           <TextInput
             label="Email Address"
             placeholder="your@email.com"
@@ -253,57 +248,41 @@ export const SignupForm: React.FC<SignupFormProps> = ({
               },
             }}
           />
-
-          <div>
-            <PasswordInput
-              label="Password"
-              placeholder="Create a strong password"
-              leftSection={<IconLock size={16} />}
-              required
-              {...form.getInputProps('password')}
-              onFocus={() => setShowPasswordRequirements(true)}
-              onBlur={() => setShowPasswordRequirements(false)}
-              styles={{
-                label: { color: 'white' },
-                input: {
-                  backgroundColor: 'var(--mantine-color-dark-7)',
-                  borderColor: 'var(--mantine-color-dark-4)',
-                  color: 'white',
-                  '&:focus': {
-                    borderColor: 'var(--mantine-color-blue-5)',
-                  },
+          <PasswordInput
+            label="Password"
+            placeholder="Create a password"
+            leftSection={<IconLock size={16} />}
+            required
+            {...form.getInputProps('password')}
+            onFocus={() => setShowPasswordRequirements(true)}
+            styles={{
+              label: { color: 'white' },
+              input: {
+                backgroundColor: 'var(--mantine-color-dark-7)',
+                borderColor: 'var(--mantine-color-dark-4)',
+                color: 'white',
+                '&:focus': {
+                  borderColor: 'var(--mantine-color-blue-5)',
                 },
-                innerInput: {
-                  backgroundColor: 'transparent',
-                  color: 'white',
-                },
-              }}
-            />
-
-            {form.values.password && (
-              <Box mt="xs">
-                <Text size="xs" c="white" fw={500}>
-                  Password strength: {passwordStrength.label}
-                </Text>
-                <Progress 
-                  value={passwordStrength.strength} 
-                  color={passwordStrength.color} 
-                  size="sm" 
-                  mt={4}
-                />
-              </Box>
-            )}
-
-            {showPasswordRequirements && form.values.password && (
-              <Box mt="xs">
-                {checks}
-              </Box>
-            )}
-          </div>
-
+              },
+              innerInput: {
+                backgroundColor: 'transparent',
+                color: 'white',
+              },
+            }}
+          />
+          {showPasswordRequirements && (
+            <Box mb="sm">
+              <Progress value={passwordStrength.strength} color={passwordStrength.color} size="sm" mb={4} />
+              <Text size="xs" c={passwordStrength.color} mb={4}>
+                Password strength: {passwordStrength.label}
+              </Text>
+              <Stack gap={2}>{checks}</Stack>
+            </Box>
+          )}
           <PasswordInput
             label="Confirm Password"
-            placeholder="Confirm your password"
+            placeholder="Repeat your password"
             leftSection={<IconLock size={16} />}
             required
             {...form.getInputProps('confirmPassword')}
@@ -323,90 +302,36 @@ export const SignupForm: React.FC<SignupFormProps> = ({
               },
             }}
           />
-
-          <Stack gap="xs" mt="md">
-            <Checkbox
-              label={
-                <Text size="sm" c="white">
-                  I agree to the{' '}
-                  <Anchor c="blue" href="/terms" target="_blank">
-                    Terms of Service
-                  </Anchor>{' '}
-                  and{' '}
-                  <Anchor c="blue" href="/privacy" target="_blank">
-                    Privacy Policy
-                  </Anchor>
-                </Text>
-              }
-              required
-              {...form.getInputProps('terms_accepted', { type: 'checkbox' })}
-              styles={{
-                input: {
-                  backgroundColor: 'var(--mantine-color-dark-7)',
-                  borderColor: 'var(--mantine-color-dark-4)',
-                  '&:checked': {
-                    backgroundColor: 'var(--mantine-color-blue-5)',
-                    borderColor: 'var(--mantine-color-blue-5)',
-                  },
-                },
-              }}
-            />
-
-            <Checkbox
-              label={
-                <Text size="sm" c="dimmed">
-                  Send me product updates and marketing emails
-                </Text>
-              }
-              {...form.getInputProps('marketing_consent', { type: 'checkbox' })}
-              styles={{
-                input: {
-                  backgroundColor: 'var(--mantine-color-dark-7)',
-                  borderColor: 'var(--mantine-color-dark-4)',
-                  '&:checked': {
-                    backgroundColor: 'var(--mantine-color-blue-5)',
-                    borderColor: 'var(--mantine-color-blue-5)',
-                  },
-                },
-              }}
-            />
-          </Stack>
-
+          <Checkbox
+            label="I accept the terms of service"
+            {...form.getInputProps('terms_accepted', { type: 'checkbox' })}
+            required
+            styles={{
+              label: { color: 'white' },
+            }}
+          />
+          <Checkbox
+            label="Send me occasional product updates"
+            {...form.getInputProps('marketing_consent', { type: 'checkbox' })}
+            styles={{
+              label: { color: 'white' },
+            }}
+          />
           <Button
             type="submit"
             fullWidth
-            size="md"
-            loading={loading || isSubmitting}
+            loading={isSubmitting}
             leftSection={<IconUserPlus size={16} />}
-            styles={{
-              root: {
-                backgroundColor: 'var(--mantine-color-blue-6)',
-                '&:hover': {
-                  backgroundColor: 'var(--mantine-color-blue-7)',
-                },
-                '&:disabled': {
-                  backgroundColor: 'var(--mantine-color-dark-5)',
-                  color: 'var(--mantine-color-dark-2)',
-                },
-              },
-            }}
+            mt="md"
           >
-            {loading || isSubmitting ? 'Creating Account...' : 'Create Account'}
+            Sign Up
           </Button>
         </Stack>
       </form>
-
-      <Divider label="or" labelPosition="center" my="lg" />
-
-      <Text c="dimmed" size="sm" ta="center">
+      <Divider my="lg" label="or" labelPosition="center" />
+      <Text ta="center" size="sm">
         Already have an account?{' '}
-        <Anchor
-          component="button"
-          type="button"
-          c="blue"
-          fw={500}
-          onClick={onSignIn}
-        >
+        <Anchor component="button" onClick={onSignIn} c="blue">
           Sign in
         </Anchor>
       </Text>

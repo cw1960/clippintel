@@ -194,7 +194,6 @@ export interface UserCriteria {
   
   // Notification Settings
   notification_enabled: boolean;
-  notification_frequency: 'immediate' | 'hourly' | 'daily' | 'weekly';
   notification_channels: NotificationChannel[];
   
   // Metadata

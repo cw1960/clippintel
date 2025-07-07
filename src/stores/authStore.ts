@@ -287,7 +287,7 @@ export const useAuthStore = create<AuthStore>()(
         try {
           // Upload file to Supabase storage
           const fileName = `avatars/${user.id}/${Date.now()}-${file.name}`;
-          const { error: uploadError } = await supabaseUtils.uploadFile(
+          const { data: uploadData, error: uploadError } = await supabaseUtils.uploadFile(
             'avatars', 
             fileName, 
             file
@@ -495,14 +495,8 @@ export const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: 'clippintell-auth',
+      name: 'auth-store',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        user: state.user,
-        profile: state.profile,
-        session: state.session,
-        initialized: state.initialized,
-      }),
     }
   )
 );
