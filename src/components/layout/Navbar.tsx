@@ -30,7 +30,6 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../stores/authStore";
 import { useActiveNavItem } from "../../stores/layoutStore";
 import type { NavbarProps, NavItem } from "../../types/layout";
 import { useAuth } from "../../components/auth";
