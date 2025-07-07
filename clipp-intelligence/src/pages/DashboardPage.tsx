@@ -6,7 +6,8 @@ import { useAuth } from '../components/auth';
 
 export const DashboardPage: React.FC = () => {
   const { setActiveItem } = useActiveNavItem ? useActiveNavItem() : { setActiveItem: () => {} };
-  const { user, profile, signOut } = useAuth ? useAuth() : { user: null, profile: null, signOut: async () => {} };
+  // Removed unused: const { user, profile, signOut } = useAuth ? useAuth() : { user: null, profile: null, signOut: async () => {} };
+  const { signOut } = useAuth ? useAuth() : { signOut: async () => {} };
 
   useEffect(() => {
     if (setActiveItem) setActiveItem('dashboard');
