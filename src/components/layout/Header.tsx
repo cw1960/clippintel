@@ -16,6 +16,7 @@ import {
   Center,
   Tooltip,
   useMatches,
+  Loader,
 } from "@mantine/core";
 import {
   IconBell,
@@ -28,7 +29,7 @@ import {
   IconX,
   IconExternalLink,
 } from "@tabler/icons-react";
-import { useAuthStore } from "../../stores/authStore";
+import { useAuth } from "../../components/auth";
 import {
   useNotificationsState,
   useUserMenuState,
@@ -42,7 +43,16 @@ export const Header: React.FC<HeaderProps> = ({
   showThemeToggle = true,
 }) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { user, profile, signOut } = useAuthStore();
+  const { profile, isLoading, isInitialized, error, user, signOut } = useAuth
+    ? useAuth()
+    : {
+        profile: null,
+        isLoading: false,
+        isInitialized: false,
+        error: null,
+        user: null,
+        signOut: async () => {},
+      };
   const { opened: userMenuOpened, toggle: toggleUserMenu } = useUserMenuState();
   const {
     opened: notificationsPanelOpened,
@@ -100,6 +110,28 @@ export const Header: React.FC<HeaderProps> = ({
     return "Just now";
   };
 
+  // Bulletproof guards for loading, error, and null/malformed profile (for user menu)
+  let userMenuContent = null;
+  if (!isInitialized || isLoading) {
+    userMenuContent = (
+      <Center style={{ minHeight: "60px" }}>
+        <Loader size="sm" color="blue" />
+      </Center>
+    );
+  } else if (error) {
+    userMenuContent = (
+      <Text c="red" size="sm">
+        Error loading profile
+      </Text>
+    );
+  } else if (!profile || !profile.id || !profile.email) {
+    userMenuContent = (
+      <Text c="red" size="sm">
+        Profile not found
+      </Text>
+    );
+  }
+
   return (
     <Group h="100%" px="md" justify="space-between">
       {/* Left side - Burger menu and title */}
@@ -111,8 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
               width: 40,
               height: 40,
               borderRadius: "50%",
-              background:
-                "linear-gradient(135deg, #F5422E 0%, #36A4A0 100%)",
+              background: "linear-gradient(135deg, #F5422E 0%, #36A4A0 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -303,90 +334,92 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         {/* User Menu */}
-        {showUserMenu && user && (
-          <Menu
-            shadow="lg"
-            width={260}
-            position="bottom-end"
-            offset={5}
-            opened={userMenuOpened}
-            onChange={toggleUserMenu}
-          >
-            <Menu.Target>
-              <UnstyledButton>
-                <Group gap="sm">
-                  <Avatar
-                    src={profile?.avatar_url}
-                    size="sm"
-                    radius="xl"
-                    color="blue"
-                  >
-                    <IconUser size={16} />
-                  </Avatar>
-                  {!isMobile && (
+        {showUserMenu &&
+          user &&
+          (userMenuContent || (
+            <Menu
+              shadow="lg"
+              width={260}
+              position="bottom-end"
+              offset={5}
+              opened={userMenuOpened}
+              onChange={toggleUserMenu}
+            >
+              <Menu.Target>
+                <UnstyledButton>
+                  <Group gap="sm">
+                    <Avatar
+                      src={profile?.avatar_url}
+                      size="sm"
+                      radius="xl"
+                      color="blue"
+                    >
+                      <IconUser size={16} />
+                    </Avatar>
+                    {!isMobile && (
+                      <Stack gap={0}>
+                        <Text size="sm" fw={500}>
+                          {profile?.full_name || user.email?.split("@")[0]}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          Free
+                        </Text>
+                      </Stack>
+                    )}
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Label>
+                  <Group gap="sm">
+                    <Avatar
+                      src={profile?.avatar_url}
+                      size="sm"
+                      radius="xl"
+                      color="blue"
+                    >
+                      <IconUser size={16} />
+                    </Avatar>
                     <Stack gap={0}>
                       <Text size="sm" fw={500}>
                         {profile?.full_name || user.email?.split("@")[0]}
                       </Text>
                       <Text size="xs" c="dimmed">
-                        Free
+                        {user.email}
                       </Text>
                     </Stack>
-                  )}
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
+                  </Group>
+                </Menu.Label>
 
-            <Menu.Dropdown>
-              <Menu.Label>
-                <Group gap="sm">
-                  <Avatar
-                    src={profile?.avatar_url}
-                    size="sm"
-                    radius="xl"
-                    color="blue"
-                  >
-                    <IconUser size={16} />
-                  </Avatar>
-                  <Stack gap={0}>
-                    <Text size="sm" fw={500}>
-                      {profile?.full_name || user.email?.split("@")[0]}
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                      {user.email}
-                    </Text>
-                  </Stack>
-                </Group>
-              </Menu.Label>
+                <Menu.Divider />
 
-              <Menu.Divider />
+                <Menu.Item
+                  leftSection={<IconUser size={14} />}
+                  onClick={() => (window.location.href = "/profile")}
+                >
+                  Profile
+                </Menu.Item>
 
-              <Menu.Item
-                leftSection={<IconUser size={14} />}
-                onClick={() => (window.location.href = "/profile")}
-              >
-                Profile
-              </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconSettings size={14} />}
+                  onClick={() => (window.location.href = "/settings")}
+                >
+                  Settings
+                </Menu.Item>
 
-              <Menu.Item
-                leftSection={<IconSettings size={14} />}
-                onClick={() => (window.location.href = "/settings")}
-              >
-                Settings
-              </Menu.Item>
+                <Menu.Divider />
 
-              <Menu.Divider />
-
-              <Menu.Item
-                leftSection={<IconLogout size={14} />}
-                color="red"
-                onClick={handleSignOut}
-              >
-                Sign out
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        )}
+                <Menu.Item
+                  leftSection={<IconLogout size={14} />}
+                  color="red"
+                  onClick={handleSignOut}
+                >
+                  Sign out
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          ))}
       </Group>
     </Group>
   );

@@ -11,6 +11,8 @@ import {
   Collapse,
   rem,
   useMatches,
+  Loader,
+  Center,
 } from "@mantine/core";
 import {
   IconDashboard,
@@ -31,6 +33,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { useActiveNavItem } from "../../stores/layoutStore";
 import type { NavbarProps, NavItem } from "../../types/layout";
+import { useAuth } from "../../components/auth";
 
 // Navigation items configuration
 const navigationItems: NavItem[] = [
@@ -163,7 +166,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, profile, signOut } = useAuthStore();
+  const { profile, isLoading, isInitialized, error, user, signOut } = useAuth
+    ? useAuth()
+    : {
+        profile: null,
+        isLoading: false,
+        isInitialized: false,
+        error: null,
+        user: null,
+        signOut: async () => {},
+      };
   const { activeItem: storeActiveItem, setActiveItem } = useActiveNavItem();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
@@ -211,6 +223,28 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const filteredItems = filterItemsByRole(navigationItems);
+
+  // Bulletproof guards for loading, error, and null/malformed profile (for user info)
+  let userInfoContent = null;
+  if (!isInitialized || isLoading) {
+    userInfoContent = (
+      <Center style={{ minHeight: "40px" }}>
+        <Loader size="sm" color="blue" />
+      </Center>
+    );
+  } else if (error) {
+    userInfoContent = (
+      <Text c="red" size="sm">
+        Error loading profile
+      </Text>
+    );
+  } else if (!profile || !profile.id || !profile.email) {
+    userInfoContent = (
+      <Text c="red" size="sm">
+        Profile not found
+      </Text>
+    );
+  }
 
   return (
     <Box
@@ -316,22 +350,26 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* User Info */}
           <Group gap="sm">
-            <Avatar
-              src={profile?.avatar_url}
-              size="sm"
-              radius="xl"
-              color="blue"
-            >
-              <IconUser size={16} />
-            </Avatar>
-            <Stack gap={0} style={{ flex: 1 }}>
-              <Text size="sm" fw={500} truncate>
-                {profile?.full_name || user?.email?.split("@")[0]}
-              </Text>
-              <Text size="xs" c="dimmed" truncate>
-                {user?.email}
-              </Text>
-            </Stack>
+            {userInfoContent || (
+              <>
+                <Avatar
+                  src={profile?.avatar_url}
+                  size="sm"
+                  radius="xl"
+                  color="blue"
+                >
+                  <IconUser size={16} />
+                </Avatar>
+                <Stack gap={0} style={{ flex: 1 }}>
+                  <Text size="sm" fw={500} truncate>
+                    {profile?.full_name || user?.email?.split("@")[0]}
+                  </Text>
+                  <Text size="xs" c="dimmed" truncate>
+                    {user?.email}
+                  </Text>
+                </Stack>
+              </>
+            )}
           </Group>
 
           {/* Quick Actions */}
