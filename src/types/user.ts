@@ -236,7 +236,7 @@ export interface UserCriteria {
 }
 
 // Supabase: notification_preferences table
-export interface NotificationPreferences {
+export interface SupabaseNotificationPreferences {
   id: string;
   user_id: string;
   email_enabled: boolean;

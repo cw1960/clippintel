@@ -26,7 +26,6 @@ import {
   IconMoonStars,
   IconCheck,
   IconX,
-  IconBrain,
   IconExternalLink,
 } from "@tabler/icons-react";
 import { useAuthStore } from "../../stores/authStore";
@@ -38,7 +37,6 @@ import type { HeaderProps } from "../../types/layout";
 
 export const Header: React.FC<HeaderProps> = ({
   burger,
-  title = "ClippIntell",
   showNotifications = true,
   showUserMenu = true,
   showThemeToggle = true,
