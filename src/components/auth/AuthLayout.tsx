@@ -16,7 +16,6 @@ import {
   IconTargetArrow,
   IconShieldCheck,
 } from "@tabler/icons-react";
-import logo from '../../assets/logo.png';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
