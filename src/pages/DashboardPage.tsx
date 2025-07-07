@@ -355,7 +355,7 @@ export const DashboardPage: React.FC = () => {
                         </Button>
                       </Group>
                     </Paper>
-                  ))}
+                  )) || <></>}
                 </Stack>
               </Stack>
             </Paper>

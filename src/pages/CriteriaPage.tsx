@@ -285,7 +285,7 @@ export const CriteriaPage: React.FC = () => {
                     </Button>
                   </Group>
                 </Group>
-              ))}
+              )) || <></>}
             </Stack>
           </Stack>
         </Paper>

@@ -176,7 +176,7 @@ export const NotificationsPage: React.FC = () => {
                     </Group>
                   </Group>
                 </Paper>
-              ))}
+              )) || <></>}
             </Stack>
           </Tabs.Panel>
 
