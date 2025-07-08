@@ -26,19 +26,73 @@ import { useAuth } from "../components/auth";
 import { clearAllZustandStores } from "../utils/formatting";
 
 export const DashboardPage: React.FC = () => {
+  // TOP-LEVEL GUARDS AND LOGGING
+  let activeNav = null;
+  let auth = null;
+  try {
+    activeNav = useActiveNavItem ? useActiveNavItem() : null;
+    console.log("DashboardPage useActiveNavItem:", activeNav);
+  } catch (err) {
+    console.error("DashboardPage useActiveNavItem error:", err);
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Nav Error
+            </Title>
+            <Text c="dimmed" size="lg">
+              {err instanceof Error ? err.message : String(err)}
+            </Text>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
+  try {
+    auth = useAuth ? useAuth() : null;
+    console.log("DashboardPage useAuth:", auth);
+  } catch (err) {
+    console.error("DashboardPage useAuth error:", err);
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Auth Error
+            </Title>
+            <Text c="dimmed" size="lg">
+              {err instanceof Error ? err.message : String(err)}
+            </Text>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
+  if (!activeNav || !auth) {
+    console.error("DashboardPage: Missing activeNav or auth", {
+      activeNav,
+      auth,
+    });
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Initialization Error
+            </Title>
+            <Text c="dimmed" size="lg">
+              Dashboard failed to initialize navigation or auth state.
+            </Text>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
+
   // Defensive: fallback to no-op if store is undefined
-  const { activeItem, setActiveItem } = useActiveNavItem
-    ? useActiveNavItem()
-    : { activeItem: null, setActiveItem: () => {} };
-  const { profile, isLoading, isInitialized, error, signOut } = useAuth
-    ? useAuth()
-    : {
-        profile: null,
-        isLoading: false,
-        isInitialized: false,
-        error: null,
-        signOut: async () => {},
-      };
+  const { activeItem, setActiveItem } = activeNav;
+  const { profile, isLoading, isInitialized, error, signOut } = auth;
 
   // Only set active nav item on mount, never on every render
   useEffect(() => {
