@@ -62,6 +62,77 @@ class WhopAPIClient {
       const endpoint = `/content-rewards?${searchParams.toString()}`
       return this.makeRequest(endpoint)
     }
+
+    // Test method to discover available endpoints
+    async testAvailableEndpoints() {
+      console.log('🔍 Testing Whop API v5 endpoints...');
+      
+      const endpoints = [
+        '/companies',
+        '/products', 
+        '/memberships',
+        '/content-rewards',
+        '/campaigns',
+        '/experiences',
+        '/apps',
+        '/users/me',
+        '/webhooks'
+      ];
+      
+      const results: { [key: string]: any } = {};
+      
+      for (const endpoint of endpoints) {
+        try {
+          const result = await this.makeRequest(endpoint + '?limit=1');
+          console.log(`✅ ${endpoint}:`, result);
+          results[endpoint] = { success: true, data: result };
+        } catch (error) {
+          console.log(`❌ ${endpoint}:`, error instanceof Error ? error.message : 'Unknown error');
+          results[endpoint] = { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+        }
+        
+        // Wait between requests to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      return results;
+    }
+
+    // Test specific company endpoints
+    async testCompanyEndpoints() {
+      if (!this.companyId) {
+        console.log('❌ No company ID available for testing');
+        return;
+      }
+      
+      console.log(`🔍 Testing company-specific endpoints for company: ${this.companyId}`);
+      
+      const companyEndpoints = [
+        `/companies/${this.companyId}`,
+        `/companies/${this.companyId}/products`,
+        `/companies/${this.companyId}/members`,
+        `/companies/${this.companyId}/analytics`,
+        `/companies/${this.companyId}/content-rewards`
+      ];
+      
+      const results: { [key: string]: any } = {};
+      
+      for (const endpoint of companyEndpoints) {
+        try {
+          const result = await this.makeRequest(endpoint + (endpoint.includes('?') ? '&limit=1' : '?limit=1'));
+          console.log(`✅ ${endpoint}:`, result);
+          results[endpoint] = { success: true, data: result };
+        } catch (error) {
+          console.log(`❌ ${endpoint}:`, error instanceof Error ? error.message : 'Unknown error');
+          results[endpoint] = { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+        }
+        
+        // Wait between requests to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      return results;
+    }
   
     // Test API connection
     async testConnection() {
@@ -72,7 +143,7 @@ class WhopAPIClient {
         return { success: true, data: result }
       } catch (error) {
         console.error('💥 Whop API connection failed:', error)
-        return { success: false, error: error.message }
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
       }
     }
   }

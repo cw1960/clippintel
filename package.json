@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@google/generative-ai": "^0.24.1",
     "@mantine/core": "^7.12.2",
     "@mantine/form": "^7.12.2",
     "@mantine/hooks": "^7.12.2",
@@ -19,6 +20,7 @@
     "@supabase/supabase-js": "^2.45.4",
     "@tabler/icons-react": "^3.11.0",
     "@types/react-router-dom": "^5.3.3",
+    "@whop-apps/sdk": "^0.0.1-canary.117",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.30.1",
