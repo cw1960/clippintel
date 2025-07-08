@@ -1,10 +1,13 @@
 import React from "react";
+import { Container, Title } from "@mantine/core";
 
 export const DashboardPage: React.FC = () => {
   return (
-    <div style={{ color: "white", fontSize: 32, padding: 40 }}>
-      Dashboard Test (minimal, no imports)
-    </div>
+    <Container size="xl" style={{ padding: 40 }}>
+      <Title order={1} style={{ color: "white" }}>
+        Dashboard Test (Mantine only)
+      </Title>
+    </Container>
   );
 };
 
