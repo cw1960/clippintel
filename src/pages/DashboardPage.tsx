@@ -23,6 +23,7 @@ import {
 } from "@tabler/icons-react";
 import { useActiveNavItem } from "../stores/layoutStore";
 import { useAuth } from "../components/auth";
+import { clearAllZustandStores } from "../utils/formatting";
 
 export const DashboardPage: React.FC = () => {
   const { activeItem, setActiveItem } = useActiveNavItem
@@ -43,6 +44,7 @@ export const DashboardPage: React.FC = () => {
   }, [activeItem, setActiveItem]);
 
   const handleLogout = async () => {
+    clearAllZustandStores();
     if (signOut) await signOut();
     window.location.href = "/login";
   };

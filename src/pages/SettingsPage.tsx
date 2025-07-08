@@ -26,6 +26,7 @@ import {
 import { useActiveNavItem } from "../stores/layoutStore";
 import { useEffect } from "react";
 import { useAuth } from "../components/auth";
+import { clearAllZustandStores } from "../utils/formatting";
 
 export const SettingsPage: React.FC = () => {
   const { activeItem, setActiveItem } = useActiveNavItem();
@@ -44,6 +45,7 @@ export const SettingsPage: React.FC = () => {
   }, [activeItem, setActiveItem]);
 
   const handleLogout = async () => {
+    clearAllZustandStores();
     if (typeof signOut === "function") await signOut();
     window.location.href = "/login";
   };

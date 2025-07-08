@@ -88,7 +88,11 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
                         overflow: "hidden",
                       }}
                     >
-                      <img src="https://i.imgur.com/Bg1YnEg.png" alt="Clipp Intelligence Logo" style={{ width: 40, height: 40, objectFit: 'contain' }} />
+                      <img
+                        src="https://i.imgur.com/Bg1YnEg.png"
+                        alt="Clipp Intelligence Logo"
+                        style={{ width: 40, height: 40, objectFit: "contain" }}
+                      />
                     </Box>
                     <Box>
                       <Title order={1} c="white" fw={700}>
@@ -101,7 +105,10 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
                   </Group>
 
                   <Text c="gray.3" size="lg" lh={1.6}>
-                    Discover and track Whop content reward opportunities with intelligent matching. Clipp Intelligence helps content clippers automate finding and filtering the best Whop.com opportunities—never miss a profitable content reward again.
+                    Discover and track Whop content reward opportunities with
+                    intelligent matching. Clipp Intelligence helps content
+                    clippers automate finding and filtering the best Whop.com
+                    opportunities—never miss a profitable content reward again.
                   </Text>
                 </Box>
 

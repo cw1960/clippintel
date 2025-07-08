@@ -308,6 +308,23 @@ export function formatPhoneNumber(phoneNumber: string): string {
   return phoneNumber;
 }
 
+/**
+ * Clears all persisted Zustand stores from localStorage.
+ * Call this on logout to fully reset all user/session state.
+ */
+export function clearAllZustandStores() {
+  try {
+    localStorage.removeItem("auth-store");
+    localStorage.removeItem("layout-store");
+    localStorage.removeItem("settings-storage");
+    // If opportunity store is ever persisted, add its key here
+    // localStorage.removeItem('opportunity-store');
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Failed to clear Zustand stores:", err);
+  }
+}
+
 // Export all utilities
 export const formatUtils = {
   formatDate,

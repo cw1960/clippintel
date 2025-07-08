@@ -33,6 +33,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useActiveNavItem } from "../../stores/layoutStore";
 import type { NavbarProps, NavItem } from "../../types/layout";
 import { useAuth } from "../../components/auth";
+import { clearAllZustandStores } from "../../utils/formatting";
 
 // Navigation items configuration
 const navigationItems: NavItem[] = [
@@ -207,6 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const handleSignOut = async () => {
+    clearAllZustandStores();
     await signOut();
   };
 

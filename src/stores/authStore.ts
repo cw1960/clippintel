@@ -113,7 +113,8 @@ function mapProfileToUserProfile(profile: any): UserProfile {
     website: profile.website || "",
     bio: profile.bio || "",
     location: profile.location || "",
-    timezone: profile.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezone:
+      profile.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
     role: profile.role || "user",
     subscription_status: profile.subscription_status || "free",
     subscription_expires_at: profile.subscription_expires_at || undefined,

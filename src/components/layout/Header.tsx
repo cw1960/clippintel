@@ -30,6 +30,7 @@ import {
   IconExternalLink,
 } from "@tabler/icons-react";
 import { useAuth } from "../../components/auth";
+import { clearAllZustandStores } from "../../utils/formatting";
 import {
   useNotificationsState,
   useUserMenuState,
@@ -70,6 +71,7 @@ export const Header: React.FC<HeaderProps> = ({
   });
 
   const handleSignOut = async () => {
+    clearAllZustandStores();
     await signOut();
   };
 

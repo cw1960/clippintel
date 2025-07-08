@@ -20,7 +20,15 @@ export const LoginPage: React.FC = () => {
       showFeatures={true}
     >
       <div style={{ marginBottom: 24 }}>
-        <ul style={{ color: '#F1F0F1', fontSize: 16, margin: 0, padding: 0, listStyle: 'none' }}>
+        <ul
+          style={{
+            color: "#F1F0F1",
+            fontSize: 16,
+            margin: 0,
+            padding: 0,
+            listStyle: "none",
+          }}
+        >
           <li>Automate your Whop content opportunity discovery</li>
           <li>AI-powered matching for content clippers</li>
           <li>Never miss a profitable opportunity again</li>

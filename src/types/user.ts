@@ -211,7 +211,7 @@ export interface Profile {
   whop_username?: string;
   created_at: string;
   updated_at: string;
-  subscription_tier: 'free' | 'premium';
+  subscription_tier: "free" | "premium";
   onboarding_completed: boolean;
   last_active_at: string;
 }
@@ -246,7 +246,7 @@ export interface SupabaseNotificationPreferences {
   discord_webhook_url?: string;
   slack_enabled: boolean;
   slack_webhook_url?: string;
-  frequency: 'instant' | 'hourly' | 'daily';
+  frequency: "instant" | "hourly" | "daily";
   min_match_score: number;
   quiet_hours_start?: string; // TIME
   quiet_hours_end?: string; // TIME
@@ -265,7 +265,7 @@ export interface UserMatch {
   viewed_at?: string;
   applied_at?: string;
   dismissed_at?: string;
-  status: 'pending' | 'viewed' | 'applied' | 'dismissed';
+  status: "pending" | "viewed" | "applied" | "dismissed";
   created_at: string;
 }
 
@@ -275,7 +275,7 @@ export interface NotificationHistory {
   user_id: string;
   opportunity_id: string;
   channel: string; // 'email', 'telegram', 'discord', 'slack'
-  status: 'sent' | 'delivered' | 'failed' | 'clicked';
+  status: "sent" | "delivered" | "failed" | "clicked";
   sent_at: string;
   delivered_at?: string;
   clicked_at?: string;

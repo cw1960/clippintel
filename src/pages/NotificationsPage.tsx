@@ -17,6 +17,7 @@ import { IconBell, IconSettings, IconCheck, IconX } from "@tabler/icons-react";
 import { useActiveNavItem } from "../stores/layoutStore";
 import { useEffect } from "react";
 import { useAuth } from "../components/auth";
+import { clearAllZustandStores } from "../utils/formatting";
 
 export const NotificationsPage: React.FC = () => {
   const { activeItem, setActiveItem } = useActiveNavItem();
@@ -35,6 +36,7 @@ export const NotificationsPage: React.FC = () => {
   }, [activeItem, setActiveItem]);
 
   const handleLogout = async () => {
+    clearAllZustandStores();
     if (typeof signOut === "function") await signOut();
     window.location.href = "/login";
   };
