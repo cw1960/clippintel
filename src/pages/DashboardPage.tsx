@@ -44,6 +44,7 @@ export const DashboardPage: React.FC = () => {
 
   const handleLogout = async () => {
     if (signOut) await signOut();
+    window.location.href = "/login";
   };
 
   // Robust guards for loading, error, and null/malformed profile
@@ -69,7 +70,7 @@ export const DashboardPage: React.FC = () => {
                 : "Failed to load profile. Please try again or contact support."}
             </Text>
             <Button onClick={handleLogout} color="red">
-              Sign Out
+              Go to Login
             </Button>
           </Stack>
         </Center>
@@ -90,7 +91,7 @@ export const DashboardPage: React.FC = () => {
               and try again, or contact support if the issue persists.
             </Text>
             <Button onClick={handleLogout} color="red">
-              Sign Out
+              Go to Login
             </Button>
           </Stack>
         </Center>

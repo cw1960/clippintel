@@ -20,13 +20,24 @@ import { useAuth } from "../components/auth";
 
 export const NotificationsPage: React.FC = () => {
   const { activeItem, setActiveItem } = useActiveNavItem();
-  const { profile, isLoading, isInitialized, error } = useAuth
+  const { profile, isLoading, isInitialized, error, signOut } = useAuth
     ? useAuth()
-    : { profile: null, isLoading: false, isInitialized: false, error: null };
+    : {
+        profile: null,
+        isLoading: false,
+        isInitialized: false,
+        error: null,
+        signOut: () => {},
+      };
 
   useEffect(() => {
     if (activeItem !== "notifications") setActiveItem("notifications");
   }, [activeItem, setActiveItem]);
+
+  const handleLogout = async () => {
+    if (typeof signOut === "function") await signOut();
+    window.location.href = "/login";
+  };
 
   // Bulletproof guards for loading, error, and null/malformed profile
   if (!isInitialized || isLoading) {
@@ -50,6 +61,9 @@ export const NotificationsPage: React.FC = () => {
                 ? error
                 : "Failed to load profile. Please try again or contact support."}
             </Text>
+            <Button onClick={handleLogout} color="red">
+              Go to Login
+            </Button>
           </Stack>
         </Center>
       </Container>
@@ -68,6 +82,9 @@ export const NotificationsPage: React.FC = () => {
               Your profile could not be loaded or is incomplete. Please sign out
               and try again, or contact support if the issue persists.
             </Text>
+            <Button onClick={handleLogout} color="red">
+              Go to Login
+            </Button>
           </Stack>
         </Center>
       </Container>
