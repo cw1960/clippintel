@@ -291,51 +291,56 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Navigation Items */}
       <ScrollArea style={{ flex: 1 }} p="md">
         <Stack gap="xs">
-          {filteredItems.map((item) => {
-            const isActive =
-              currentActiveItem === item.id || location.pathname === item.path;
-            const isExpanded = expandedItems.includes(item.id);
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item) => {
+              const isActive =
+                currentActiveItem === item.id ||
+                location.pathname === item.path;
+              const isExpanded = expandedItems.includes(item.id);
 
-            return (
-              <Box key={item.id}>
-                <NavItemButton
-                  item={item}
-                  active={isActive}
-                  onClick={() => handleItemClick(item)}
-                  hasChildren={item.children && item.children.length > 0}
-                  isExpanded={isExpanded}
-                />
+              return (
+                <Box key={item.id}>
+                  <NavItemButton
+                    item={item}
+                    active={isActive}
+                    onClick={() => handleItemClick(item)}
+                    hasChildren={item.children && item.children.length > 0}
+                    isExpanded={isExpanded}
+                  />
 
-                {item.children && (
-                  <Collapse in={isExpanded}>
-                    <Stack gap="xs" mt="xs">
-                      {item.children.map((child) => {
-                        const childIsActive =
-                          currentActiveItem === child.id ||
-                          location.pathname === child.path;
-                        return (
-                          <NavItemButton
-                            key={child.id}
-                            item={child}
-                            active={childIsActive}
-                            onClick={() => {
-                              navigate(child.path);
-                              setActiveItem(child.id);
-                              onItemClick?.(child);
-                              if (isMobile) {
-                                onClose();
-                              }
-                            }}
-                            level={1}
-                          />
-                        );
-                      })}
-                    </Stack>
-                  </Collapse>
-                )}
-              </Box>
-            );
-          })}
+                  {item.children && item.children.length > 0 && (
+                    <Collapse in={isExpanded}>
+                      <Stack gap="xs" mt="xs">
+                        {item.children.map((child) => {
+                          const childIsActive =
+                            currentActiveItem === child.id ||
+                            location.pathname === child.path;
+                          return (
+                            <NavItemButton
+                              key={child.id}
+                              item={child}
+                              active={childIsActive}
+                              onClick={() => {
+                                navigate(child.path);
+                                setActiveItem(child.id);
+                                onItemClick?.(child);
+                                if (isMobile) {
+                                  onClose();
+                                }
+                              }}
+                              level={1}
+                            />
+                          );
+                        })}
+                      </Stack>
+                    </Collapse>
+                  )}
+                </Box>
+              );
+            })
+          ) : (
+            <></>
+          )}
         </Stack>
       </ScrollArea>
 
