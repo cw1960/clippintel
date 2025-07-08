@@ -1,17 +1,17 @@
 import React from "react";
 import { Container, Title } from "@mantine/core";
 import { IconDashboard } from "@tabler/icons-react";
-let nav: any = null;
-let error: any = null;
-try {
-  // Dynamically require to avoid crash on import if store is broken
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  nav = require("../stores/layoutStore").useActiveNavItem();
-} catch (e) {
-  error = e;
-}
+import { useActiveNavItem } from "../stores/layoutStore";
 
 export const DashboardPage: React.FC = () => {
+  let nav: any = null;
+  let error: any = null;
+  try {
+    nav = useActiveNavItem();
+  } catch (e) {
+    error = e;
+  }
+
   if (error) {
     return (
       <Container size="xl" style={{ padding: 40 }}>
