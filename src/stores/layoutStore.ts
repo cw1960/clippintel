@@ -37,7 +37,9 @@ export const useLayoutStore = create<LayoutStore>()(
       },
 
       setActiveNavItem: (itemId: string) => {
-        set({ activeNavItem: itemId });
+        set((state) =>
+          state.activeNavItem !== itemId ? { activeNavItem: itemId } : state,
+        );
       },
 
       markNotificationAsRead: (notificationId: string) => {
