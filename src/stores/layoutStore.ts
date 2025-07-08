@@ -13,7 +13,7 @@ export const useLayoutStore = create<LayoutStore>()(
       navbarOpened: false,
       userMenuOpened: false,
       notificationsPanelOpened: false,
-      activeNavItem: "dashboard",
+      activeNavItem: "dashboard", // Defensive default
       notifications: [],
       unreadNotificationsCount: 0,
 
@@ -134,7 +134,11 @@ export const useNotificationsState = () =>
 
 export const useActiveNavItem = () =>
   useLayoutStore((state) => ({
-    activeItem: state.activeNavItem,
+    activeItem:
+      typeof state.activeNavItem === "string" &&
+      state.activeNavItem.trim() !== ""
+        ? state.activeNavItem
+        : "dashboard",
     setActiveItem: state.setActiveNavItem,
   }));
 
