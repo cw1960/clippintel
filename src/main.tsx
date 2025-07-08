@@ -1,28 +1,13 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { MantineProvider } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
 import { theme } from "./theme";
-import { initializeAuth } from "./stores/authStore";
-import App from "./App";
+import DashboardPage from "./pages/DashboardPage";
 
-// Import Mantine styles
-import "@mantine/core/styles.css";
-import "@mantine/notifications/styles.css";
-import "@mantine/charts/styles.css";
-import "./index.css";
-
-// Initialize authentication state
-initializeAuth();
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <MantineProvider theme={theme} defaultColorScheme="dark">
-        <Notifications />
-        <App />
-      </MantineProvider>
-    </BrowserRouter>
-  </StrictMode>,
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <MantineProvider theme={theme} defaultColorScheme="dark">
+      <DashboardPage />
+    </MantineProvider>
+  </React.StrictMode>,
 );
