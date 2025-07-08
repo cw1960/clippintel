@@ -19,14 +19,14 @@ import { useEffect } from "react";
 import { useAuth } from "../components/auth";
 
 export const NotificationsPage: React.FC = () => {
-  const { setActiveItem } = useActiveNavItem();
+  const { activeItem, setActiveItem } = useActiveNavItem();
   const { profile, isLoading, isInitialized, error } = useAuth
     ? useAuth()
     : { profile: null, isLoading: false, isInitialized: false, error: null };
 
   useEffect(() => {
-    setActiveItem("notifications");
-  }, [setActiveItem]);
+    if (activeItem !== "notifications") setActiveItem("notifications");
+  }, [activeItem, setActiveItem]);
 
   // Bulletproof guards for loading, error, and null/malformed profile
   if (!isInitialized || isLoading) {

@@ -25,9 +25,9 @@ import { useActiveNavItem } from "../stores/layoutStore";
 import { useAuth } from "../components/auth";
 
 export const DashboardPage: React.FC = () => {
-  const { setActiveItem } = useActiveNavItem
+  const { activeItem, setActiveItem } = useActiveNavItem
     ? useActiveNavItem()
-    : { setActiveItem: () => {} };
+    : { activeItem: null, setActiveItem: () => {} };
   const { profile, isLoading, isInitialized, error, signOut } = useAuth
     ? useAuth()
     : {
@@ -39,8 +39,8 @@ export const DashboardPage: React.FC = () => {
       };
 
   useEffect(() => {
-    if (setActiveItem) setActiveItem("dashboard");
-  }, [setActiveItem]);
+    if (activeItem !== "dashboard") setActiveItem("dashboard");
+  }, [activeItem, setActiveItem]);
 
   const handleLogout = async () => {
     if (signOut) await signOut();

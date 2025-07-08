@@ -28,14 +28,14 @@ import { useEffect } from "react";
 import { useAuth } from "../components/auth";
 
 export const SettingsPage: React.FC = () => {
-  const { setActiveItem } = useActiveNavItem();
+  const { activeItem, setActiveItem } = useActiveNavItem();
   const { profile, isLoading, isInitialized, error } = useAuth
     ? useAuth()
     : { profile: null, isLoading: false, isInitialized: false, error: null };
 
   useEffect(() => {
-    setActiveItem("settings");
-  }, [setActiveItem]);
+    if (activeItem !== "settings") setActiveItem("settings");
+  }, [activeItem, setActiveItem]);
 
   // Bulletproof guards for loading, error, and null/malformed profile
   if (!isInitialized || isLoading) {
