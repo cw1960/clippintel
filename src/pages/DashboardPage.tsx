@@ -105,7 +105,77 @@ export const DashboardPage: React.FC = () => {
   }
 
   // Fallbacks for profile fields
-  const displayName = profile.full_name || profile.email || "User";
+  console.log("DashboardPage profile:", profile);
+  const displayName =
+    typeof profile.full_name === "string" && profile.full_name.trim() !== ""
+      ? profile.full_name
+      : typeof profile.email === "string"
+        ? profile.email
+        : "User";
+
+  // Metrics (static for now, but log anyway)
+  const metrics = [
+    {
+      label: "Active Opportunities",
+      value: 24,
+      color: "blue",
+      icon: <IconTargetArrow size={16} color="var(--mantine-color-blue-6)" />,
+    },
+    {
+      label: "Match Score",
+      value: "87%",
+      color: "green",
+      icon: <IconTrendingUp size={16} color="var(--mantine-color-green-6)" />,
+    },
+    {
+      label: "Applications",
+      value: 8,
+      color: "orange",
+      icon: (
+        <IconCalendarEvent size={16} color="var(--mantine-color-orange-6)" />
+      ),
+    },
+    {
+      label: "Success Rate",
+      value: "72%",
+      color: "purple",
+      icon: <IconBell size={16} color="var(--mantine-color-purple-6)" />,
+    },
+  ];
+  console.log("DashboardPage metrics:", metrics);
+
+  // Opportunities (static for now, but log anyway)
+  const opportunities = [
+    {
+      title: "AI Research Innovation Grant",
+      value: "$150,000",
+      match: 95,
+      deadline: "15 days",
+      status: "new",
+    },
+    {
+      title: "Small Business Technology Fund",
+      value: "$75,000",
+      match: 88,
+      deadline: "8 days",
+      status: "reviewing",
+    },
+    {
+      title: "Digital Transformation Initiative",
+      value: "$200,000",
+      match: 82,
+      deadline: "22 days",
+      status: "new",
+    },
+    {
+      title: "Sustainability Research Program",
+      value: "$100,000",
+      match: 79,
+      deadline: "5 days",
+      status: "applied",
+    },
+  ];
+  console.log("DashboardPage opportunities:", opportunities);
 
   // Try/catch for all rendering logic
   try {
