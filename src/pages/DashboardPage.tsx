@@ -107,307 +107,332 @@ export const DashboardPage: React.FC = () => {
   // Fallbacks for profile fields
   const displayName = profile.full_name || profile.email || "User";
 
-  return (
-    <Container size="xl">
-      <Stack gap="xl">
-        {/* Page Header */}
-        <Stack gap="xs">
-          <Group gap="sm" justify="space-between">
-            <Group gap="sm">
-              <IconDashboard size={32} color="var(--mantine-color-blue-6)" />
-              <Title order={1}>Dashboard</Title>
+  // Try/catch for all rendering logic
+  try {
+    return (
+      <Container size="xl">
+        <Stack gap="xl">
+          {/* Page Header */}
+          <Stack gap="xs">
+            <Group gap="sm" justify="space-between">
+              <Group gap="sm">
+                <IconDashboard size={32} color="var(--mantine-color-blue-6)" />
+                <Title order={1}>Dashboard</Title>
+              </Group>
+              <Button
+                variant="light"
+                color="red"
+                leftSection={<IconLogout size={16} />}
+                onClick={handleLogout}
+              >
+                Sign Out
+              </Button>
             </Group>
-            <Button
-              variant="light"
-              color="red"
-              leftSection={<IconLogout size={16} />}
-              onClick={handleLogout}
-            >
-              Sign Out
-            </Button>
-          </Group>
-          <Text c="dimmed" size="lg">
-            Welcome, {displayName}! Monitor opportunities and track your
-            success.
-          </Text>
-        </Stack>
+            <Text c="dimmed" size="lg">
+              Welcome, {displayName}! Monitor opportunities and track your
+              success.
+            </Text>
+          </Stack>
 
-        {/* Key Metrics */}
-        <Grid>
-          <Grid.Col span={{ base: 12, md: 3 }}>
-            <Paper
-              p="md"
-              radius="md"
-              style={{
-                border: "1px solid var(--mantine-color-default-border)",
-              }}
-            >
-              <Stack gap="xs">
-                <Group justify="space-between">
-                  <Text size="sm" c="dimmed" fw={500}>
-                    Active Opportunities
+          {/* Key Metrics */}
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Paper
+                p="md"
+                radius="md"
+                style={{
+                  border: "1px solid var(--mantine-color-default-border)",
+                }}
+              >
+                <Stack gap="xs">
+                  <Group justify="space-between">
+                    <Text size="sm" c="dimmed" fw={500}>
+                      Active Opportunities
+                    </Text>
+                    <IconTargetArrow
+                      size={16}
+                      color="var(--mantine-color-blue-6)"
+                    />
+                  </Group>
+                  <Text size="xl" fw={700} c="blue">
+                    24
                   </Text>
-                  <IconTargetArrow
-                    size={16}
-                    color="var(--mantine-color-blue-6)"
-                  />
-                </Group>
-                <Text size="xl" fw={700} c="blue">
-                  24
-                </Text>
-                <Text size="xs" c="green">
-                  12% from last week
-                </Text>
-              </Stack>
-            </Paper>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 3 }}>
-            <Paper
-              p="md"
-              radius="md"
-              style={{
-                border: "1px solid var(--mantine-color-default-border)",
-              }}
-            >
-              <Stack gap="xs">
-                <Group justify="space-between">
-                  <Text size="sm" c="dimmed" fw={500}>
-                    Match Score
+                  <Text size="xs" c="green">
+                    12% from last week
                   </Text>
-                  <IconTrendingUp
-                    size={16}
-                    color="var(--mantine-color-green-6)"
-                  />
-                </Group>
-                <Text size="xl" fw={700} c="green">
-                  87%
-                </Text>
-                <Text size="xs" c="green">
-                  15% improvement
-                </Text>
-              </Stack>
-            </Paper>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 3 }}>
-            <Paper
-              p="md"
-              radius="md"
-              style={{
-                border: "1px solid var(--mantine-color-default-border)",
-              }}
-            >
-              <Stack gap="xs">
-                <Group justify="space-between">
-                  <Text size="sm" c="dimmed" fw={500}>
-                    Applications
+                </Stack>
+              </Paper>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Paper
+                p="md"
+                radius="md"
+                style={{
+                  border: "1px solid var(--mantine-color-default-border)",
+                }}
+              >
+                <Stack gap="xs">
+                  <Group justify="space-between">
+                    <Text size="sm" c="dimmed" fw={500}>
+                      Match Score
+                    </Text>
+                    <IconTrendingUp
+                      size={16}
+                      color="var(--mantine-color-green-6)"
+                    />
+                  </Group>
+                  <Text size="xl" fw={700} c="green">
+                    87%
                   </Text>
-                  <IconCalendarEvent
-                    size={16}
-                    color="var(--mantine-color-orange-6)"
-                  />
-                </Group>
-                <Text size="xl" fw={700} c="orange">
-                  8
-                </Text>
-                <Text size="xs" c="orange">
-                  3 pending review
-                </Text>
-              </Stack>
-            </Paper>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 3 }}>
-            <Paper
-              p="md"
-              radius="md"
-              style={{
-                border: "1px solid var(--mantine-color-default-border)",
-              }}
-            >
-              <Stack gap="xs">
-                <Group justify="space-between">
-                  <Text size="sm" c="dimmed" fw={500}>
-                    Success Rate
+                  <Text size="xs" c="green">
+                    15% improvement
                   </Text>
-                  <IconBell size={16} color="var(--mantine-color-purple-6)" />
-                </Group>
-                <Text size="xl" fw={700} c="purple">
-                  72%
-                </Text>
-                <Text size="xs" c="purple">
-                  Above average
-                </Text>
-              </Stack>
-            </Paper>
-          </Grid.Col>
-        </Grid>
+                </Stack>
+              </Paper>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Paper
+                p="md"
+                radius="md"
+                style={{
+                  border: "1px solid var(--mantine-color-default-border)",
+                }}
+              >
+                <Stack gap="xs">
+                  <Group justify="space-between">
+                    <Text size="sm" c="dimmed" fw={500}>
+                      Applications
+                    </Text>
+                    <IconCalendarEvent
+                      size={16}
+                      color="var(--mantine-color-orange-6)"
+                    />
+                  </Group>
+                  <Text size="xl" fw={700} c="orange">
+                    8
+                  </Text>
+                  <Text size="xs" c="orange">
+                    3 pending review
+                  </Text>
+                </Stack>
+              </Paper>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Paper
+                p="md"
+                radius="md"
+                style={{
+                  border: "1px solid var(--mantine-color-default-border)",
+                }}
+              >
+                <Stack gap="xs">
+                  <Group justify="space-between">
+                    <Text size="sm" c="dimmed" fw={500}>
+                      Success Rate
+                    </Text>
+                    <IconBell size={16} color="var(--mantine-color-purple-6)" />
+                  </Group>
+                  <Text size="xl" fw={700} c="purple">
+                    72%
+                  </Text>
+                  <Text size="xs" c="purple">
+                    Above average
+                  </Text>
+                </Stack>
+              </Paper>
+            </Grid.Col>
+          </Grid>
 
-        <Grid>
-          {/* Recent Opportunities */}
-          <Grid.Col span={{ base: 12, lg: 8 }}>
-            <Paper
-              p="xl"
-              radius="md"
-              style={{
-                border: "1px solid var(--mantine-color-default-border)",
-              }}
-            >
-              <Stack gap="md">
-                <Group justify="space-between">
-                  <Title order={3}>Recent Opportunities</Title>
-                  <Button variant="subtle" size="sm">
-                    View All
-                  </Button>
-                </Group>
+          <Grid>
+            {/* Recent Opportunities */}
+            <Grid.Col span={{ base: 12, lg: 8 }}>
+              <Paper
+                p="xl"
+                radius="md"
+                style={{
+                  border: "1px solid var(--mantine-color-default-border)",
+                }}
+              >
                 <Stack gap="md">
-                  {[
-                    {
-                      title: "AI Research Innovation Grant",
-                      value: "$150,000",
-                      match: 95,
-                      deadline: "15 days",
-                      status: "new",
-                    },
-                    {
-                      title: "Small Business Technology Fund",
-                      value: "$75,000",
-                      match: 88,
-                      deadline: "8 days",
-                      status: "reviewing",
-                    },
-                    {
-                      title: "Digital Transformation Initiative",
-                      value: "$200,000",
-                      match: 82,
-                      deadline: "22 days",
-                      status: "new",
-                    },
-                    {
-                      title: "Sustainability Research Program",
-                      value: "$100,000",
-                      match: 79,
-                      deadline: "5 days",
-                      status: "applied",
-                    },
-                  ].map((opportunity, index) => (
-                    <Paper
-                      key={index}
-                      p="md"
-                      radius="sm"
-                      style={{
-                        border: "1px solid var(--mantine-color-default-border)",
-                        backgroundColor: "var(--mantine-color-gray-light)",
-                      }}
-                    >
-                      <Group justify="space-between" align="flex-start">
-                        <Stack gap="xs" style={{ flex: 1 }}>
-                          <Group gap="sm">
-                            <Text fw={500} size="sm">
-                              {opportunity.title}
-                            </Text>
-                            <Badge
-                              color={
-                                opportunity.status === "new"
-                                  ? "blue"
-                                  : opportunity.status === "applied"
+                  <Group justify="space-between">
+                    <Title order={3}>Recent Opportunities</Title>
+                    <Button variant="subtle" size="sm">
+                      View All
+                    </Button>
+                  </Group>
+                  <Stack gap="md">
+                    {[
+                      {
+                        title: "AI Research Innovation Grant",
+                        value: "$150,000",
+                        match: 95,
+                        deadline: "15 days",
+                        status: "new",
+                      },
+                      {
+                        title: "Small Business Technology Fund",
+                        value: "$75,000",
+                        match: 88,
+                        deadline: "8 days",
+                        status: "reviewing",
+                      },
+                      {
+                        title: "Digital Transformation Initiative",
+                        value: "$200,000",
+                        match: 82,
+                        deadline: "22 days",
+                        status: "new",
+                      },
+                      {
+                        title: "Sustainability Research Program",
+                        value: "$100,000",
+                        match: 79,
+                        deadline: "5 days",
+                        status: "applied",
+                      },
+                    ].map((opportunity, index) => (
+                      <Paper
+                        key={index}
+                        p="md"
+                        radius="sm"
+                        style={{
+                          border:
+                            "1px solid var(--mantine-color-default-border)",
+                          backgroundColor: "var(--mantine-color-gray-light)",
+                        }}
+                      >
+                        <Group justify="space-between" align="flex-start">
+                          <Stack gap="xs" style={{ flex: 1 }}>
+                            <Group gap="sm">
+                              <Text fw={500} size="sm">
+                                {opportunity.title}
+                              </Text>
+                              <Badge
+                                color={
+                                  opportunity.status === "new"
+                                    ? "blue"
+                                    : opportunity.status === "applied"
+                                      ? "green"
+                                      : "orange"
+                                }
+                                variant="light"
+                                size="xs"
+                              >
+                                {opportunity.status}
+                              </Badge>
+                            </Group>
+                            <Group gap="lg">
+                              <Text size="xs" c="dimmed">
+                                Value: {opportunity.value}
+                              </Text>
+                              <Text size="xs" c="dimmed">
+                                Deadline: {opportunity.deadline}
+                              </Text>
+                            </Group>
+                            <Group gap="sm" align="center">
+                              <Text size="xs" c="dimmed">
+                                Match:
+                              </Text>
+                              <Progress
+                                value={opportunity.match}
+                                size="sm"
+                                style={{ flex: 1, maxWidth: 100 }}
+                                color={
+                                  opportunity.match > 90
                                     ? "green"
-                                    : "orange"
-                              }
-                              variant="light"
-                              size="xs"
-                            >
-                              {opportunity.status}
-                            </Badge>
-                          </Group>
-                          <Group gap="lg">
-                            <Text size="xs" c="dimmed">
-                              Value: {opportunity.value}
-                            </Text>
-                            <Text size="xs" c="dimmed">
-                              Deadline: {opportunity.deadline}
-                            </Text>
-                          </Group>
-                          <Group gap="sm" align="center">
-                            <Text size="xs" c="dimmed">
-                              Match:
-                            </Text>
-                            <Progress
-                              value={opportunity.match}
-                              size="sm"
-                              style={{ flex: 1, maxWidth: 100 }}
-                              color={
-                                opportunity.match > 90
-                                  ? "green"
-                                  : opportunity.match > 80
-                                    ? "blue"
-                                    : "orange"
-                              }
-                            />
-                            <Text
-                              size="xs"
-                              fw={500}
-                              c={
-                                opportunity.match > 90
-                                  ? "green"
-                                  : opportunity.match > 80
-                                    ? "blue"
-                                    : "orange"
-                              }
-                            >
-                              {opportunity.match}%
-                            </Text>
-                          </Group>
-                        </Stack>
-                        <Button size="xs" variant="light">
-                          View
-                        </Button>
-                      </Group>
-                    </Paper>
-                  ))}
+                                    : opportunity.match > 80
+                                      ? "blue"
+                                      : "orange"
+                                }
+                              />
+                              <Text
+                                size="xs"
+                                fw={500}
+                                c={
+                                  opportunity.match > 90
+                                    ? "green"
+                                    : opportunity.match > 80
+                                      ? "blue"
+                                      : "orange"
+                                }
+                              >
+                                {opportunity.match}%
+                              </Text>
+                            </Group>
+                          </Stack>
+                          <Button size="xs" variant="light">
+                            View
+                          </Button>
+                        </Group>
+                      </Paper>
+                    ))}
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Paper>
-          </Grid.Col>
+              </Paper>
+            </Grid.Col>
 
-          {/* Quick Actions */}
-          <Grid.Col span={{ base: 12, lg: 4 }}>
-            <Paper
-              p="xl"
-              radius="md"
-              style={{
-                border: "1px solid var(--mantine-color-default-border)",
-              }}
-            >
-              <Stack gap="md">
-                <Title order={3}>Quick Actions</Title>
-                <Stack gap="sm">
-                  <Button
-                    fullWidth
-                    variant="light"
-                    leftSection={<IconTargetArrow size={16} />}
-                  >
-                    Create New Criteria
-                  </Button>
-                  <Button
-                    fullWidth
-                    variant="light"
-                    leftSection={<IconBell size={16} />}
-                  >
-                    Review Notifications
-                  </Button>
-                  <Button fullWidth variant="outline">
-                    Export Report
-                  </Button>
-                  <Button fullWidth variant="outline">
-                    Schedule Meeting
-                  </Button>
+            {/* Quick Actions */}
+            <Grid.Col span={{ base: 12, lg: 4 }}>
+              <Paper
+                p="xl"
+                radius="md"
+                style={{
+                  border: "1px solid var(--mantine-color-default-border)",
+                }}
+              >
+                <Stack gap="md">
+                  <Title order={3}>Quick Actions</Title>
+                  <Stack gap="sm">
+                    <Button
+                      fullWidth
+                      variant="light"
+                      leftSection={<IconTargetArrow size={16} />}
+                    >
+                      Create New Criteria
+                    </Button>
+                    <Button
+                      fullWidth
+                      variant="light"
+                      leftSection={<IconBell size={16} />}
+                    >
+                      Review Notifications
+                    </Button>
+                    <Button fullWidth variant="outline">
+                      Export Report
+                    </Button>
+                    <Button fullWidth variant="outline">
+                      Schedule Meeting
+                    </Button>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Paper>
-          </Grid.Col>
-        </Grid>
-      </Stack>
-    </Container>
-  );
+              </Paper>
+            </Grid.Col>
+          </Grid>
+        </Stack>
+      </Container>
+    );
+  } catch (err) {
+    // Log the error for debugging
+    // eslint-disable-next-line no-console
+    console.error("DashboardPage render error:", err);
+    return (
+      <Container size="sm" py="xl">
+        <Center style={{ minHeight: "60vh" }}>
+          <Stack align="center" gap="md">
+            <Title order={2} c="red">
+              Dashboard Error
+            </Title>
+            <Text c="dimmed" size="lg">
+              {err instanceof Error ? err.message : String(err)}
+            </Text>
+            <Button onClick={handleLogout} color="red">
+              Go to Login
+            </Button>
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
 };
 
 export default DashboardPage;
