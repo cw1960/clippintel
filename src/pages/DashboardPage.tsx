@@ -41,7 +41,9 @@ export const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (activeItem !== "dashboard") setActiveItem("dashboard");
-  }, [activeItem, setActiveItem]);
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = async () => {
     clearAllZustandStores();
