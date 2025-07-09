@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Shield, Users, Award, TrendingUp, Upload, Download, Search, Star } from 'lucide-react';
+import { useAuth } from '../auth/AuthWrapper';
 import AccountAnalyzer from '../AccountAnalyzer';
 
 type UserType = 'agency' | 'creator';
 type DashboardView = 'detection' | 'campaigns' | 'certification' | 'marketplace' | 'analytics';
 
 const DashboardRouter: React.FC = () => {
-  const [userType, setUserType] = useState<UserType>('agency');
-  const [currentView, setCurrentView] = useState<DashboardView>('detection');
+  const { userRole, setUserRole } = useAuth();
+  const userType = userRole || 'agency';
+  const [currentView, setCurrentView] = useState<DashboardView>(userRole === 'creator' ? 'certification' : 'detection');
 
   const AgencyNavigation = () => (
     <div className="bg-white shadow-sm border-r border-gray-200 w-64 flex-shrink-0">
@@ -734,7 +736,7 @@ const DashboardRouter: React.FC = () => {
           <div className="flex space-x-1">
             <button
               onClick={() => {
-                setUserType('agency');
+                setUserRole('agency');
                 setCurrentView('detection');
               }}
               className={`px-4 py-2 rounded-md text-sm font-medium ${
@@ -747,7 +749,7 @@ const DashboardRouter: React.FC = () => {
             </button>
             <button
               onClick={() => {
-                setUserType('creator');
+                setUserRole('creator');
                 setCurrentView('certification');
               }}
               className={`px-4 py-2 rounded-md text-sm font-medium ${

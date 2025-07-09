@@ -1,7 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase, authHelpers } from './supabase';
-import { LogIn, UserPlus, LogOut, Mail, Lock, User as UserIcon, Building2 } from 'lucide-react';
+import { LogIn, UserPlus, LogOut, Mail, Lock, User as UserIcon, Building2, Shield, Award } from 'lucide-react';
+
+type UserRole = 'agency' | 'creator' | null;
+
+interface AuthContextType {
+  user: User | null;
+  userRole: UserRole;
+  setUserRole: (role: UserRole) => void;
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  userRole: null,
+  setUserRole: () => {}
+});
+
+export const useAuth = () => useContext(AuthContext);
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -9,23 +25,39 @@ interface AuthWrapperProps {
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userRole, setUserRole] = useState<UserRole>(null);
   const [loading, setLoading] = useState(true);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showRoleSelection, setShowRoleSelection] = useState(false);
 
   useEffect(() => {
     // Check current user
     authHelpers.getCurrentUser().then(({ data: { user } }) => {
       setUser(user);
+      if (user) {
+        // Get user role from localStorage or database
+        const savedRole = localStorage.getItem('userRole') as UserRole;
+        if (savedRole) {
+          setUserRole(savedRole);
+        } else {
+          setShowRoleSelection(true);
+        }
+      }
       setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = authHelpers.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (!session?.user) {
+        setUserRole(null);
+        localStorage.removeItem('userRole');
+        setShowRoleSelection(false);
+      }
       setLoading(false);
     });
 
@@ -53,8 +85,16 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     }
   };
 
+  const handleRoleSelection = (role: UserRole) => {
+    setUserRole(role);
+    localStorage.setItem('userRole', role!);
+    setShowRoleSelection(false);
+  };
+
   const handleSignOut = async () => {
     await authHelpers.signOut();
+    setUserRole(null);
+    localStorage.removeItem('userRole');
   };
 
   if (loading) {
@@ -177,12 +217,11 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
 
             {authMode === 'signup' && (
               <div className="mt-6 p-4 bg-blue-50 rounded-md">
-                <h3 className="font-medium text-blue-900 mb-2">Free Trial Includes:</h3>
+                <h3 className="font-medium text-blue-900 mb-2">Join the Platform:</h3>
                 <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• 100 bot analyses per month</li>
-                  <li>• Campaign management dashboard</li>
-                  <li>• Export analysis reports</li>
-                  <li>• Email support</li>
+                  <li>• <strong>Agencies:</strong> Detect bots, save money, access verified creators</li>
+                  <li>• <strong>Creators:</strong> Get verified, access premium campaigns</li>
+                  <li>• <strong>Both:</strong> Join the fight against $1.3B in fraud</li>
                 </ul>
               </div>
             )}
@@ -197,42 +236,147 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     );
   }
 
-  // User is authenticated, show the app with user info
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <Building2 className="w-6 h-6 text-white" />
+  // Show role selection if user is authenticated but no role selected
+  if (showRoleSelection) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to ClippIntell!</h1>
+            <p className="text-gray-600">Choose your role to get started</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Agency Owner */}
+            <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-transparent hover:border-blue-500 cursor-pointer transition-all"
+                 onClick={() => handleRoleSelection('agency')}>
+              <div className="text-center">
+                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Agency Owner</h3>
+                <p className="text-gray-600 mb-6">Detect bots, manage campaigns, access verified creators</p>
+                
+                <div className="space-y-2 text-sm text-gray-700 mb-6">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Advanced bot detection</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Campaign management</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Fraud prevention analytics</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Verified creator marketplace</span>
+                  </div>
+                </div>
+
+                <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                  Continue as Agency
+                </button>
               </div>
-              <h1 className="text-xl font-bold text-gray-900">ClippIntell</h1>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-gray-700">
-                <UserIcon className="w-4 h-4" />
-                <span className="text-sm">{user.email}</span>
+
+            {/* Creator */}
+            <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-transparent hover:border-purple-500 cursor-pointer transition-all"
+                 onClick={() => handleRoleSelection('creator')}>
+              <div className="text-center">
+                <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Content Creator</h3>
+                <p className="text-gray-600 mb-6">Get verified, access premium campaigns, boost credibility</p>
+                
+                <div className="space-y-2 text-sm text-gray-700 mb-6">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Account verification badges</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Premium campaign access</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Performance analytics</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Stand out from 800K+ creators</span>
+                  </div>
+                </div>
+
+                <button className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700">
+                  Continue as Creator
+                </button>
               </div>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-100"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm">Sign Out</span>
-              </button>
             </div>
           </div>
-        </div>
-      </nav>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
-    </div>
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-500">You can change your role anytime in settings</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // User is authenticated with role selected
+  return (
+    <AuthContext.Provider value={{ user, userRole, setUserRole }}>
+      <div className="min-h-screen bg-gray-50">
+        {/* Top Navigation */}
+        <nav className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-3">
+                <div className="bg-blue-600 p-2 rounded-lg">
+                  <Building2 className="w-6 h-6 text-white" />
+                </div>
+                <h1 className="text-xl font-bold text-gray-900">ClippIntell</h1>
+                <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  userRole === 'agency' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'bg-purple-100 text-purple-700'
+                }`}>
+                  {userRole === 'agency' ? 'Agency' : 'Creator'}
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 text-gray-700">
+                  <UserIcon className="w-4 h-4" />
+                  <span className="text-sm">{user.email}</span>
+                </div>
+                <button
+                  onClick={() => setShowRoleSelection(true)}
+                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                >
+                  Switch Role
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-100"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm">Sign Out</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        {/* Main Content */}
+        <main>
+          {children}
+        </main>
+      </div>
+    </AuthContext.Provider>
   );
 };
 
