@@ -470,7 +470,7 @@ const DashboardRouter: React.FC = () => {
             <button
               onClick={() => {
                 setUserRole('admin');
-                setCurrentView('overview');
+                setCurrentView('detection');
               }}
               className={`px-3 py-2 rounded-md text-xs font-medium ${
                 userType === 'admin'
