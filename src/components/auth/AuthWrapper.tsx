@@ -3,7 +3,7 @@ import { User } from '@supabase/supabase-js';
 import { supabase, authHelpers } from './supabase';
 import { LogIn, UserPlus, LogOut, Mail, Lock, User as UserIcon, Building2, Shield, Award } from 'lucide-react';
 
-type UserRole = 'agency' | 'creator' | null;
+type UserRole = 'agency' | 'creator' | 'admin' | 'rewards_owner' | null;
 
 interface AuthContextType {
   user: User | null;
@@ -240,13 +240,13 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   if (showRoleSelection) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full">
+        <div className="max-w-5xl w-full">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to ClippIntell!</h1>
             <p className="text-gray-600">Choose your role to get started</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Agency Owner */}
             <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-transparent hover:border-blue-500 cursor-pointer transition-all"
                  onClick={() => handleRoleSelection('agency')}>
@@ -278,6 +278,41 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
 
                 <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
                   Continue as Agency
+                </button>
+              </div>
+            </div>
+
+            {/* Content Rewards Program Owner */}
+            <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-transparent hover:border-green-500 cursor-pointer transition-all"
+                 onClick={() => handleRoleSelection('rewards_owner')}>
+              <div className="text-center">
+                <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Content Rewards Owner</h3>
+                <p className="text-gray-600 mb-6">Run your own content campaigns, screen creators, prevent fraud</p>
+                
+                <div className="space-y-2 text-sm text-gray-700 mb-6">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Create & manage your campaigns</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Screen creator applications</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Bot detection for applicants</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Small business pricing</span>
+                  </div>
+                </div>
+
+                <button className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
+                  Continue as Rewards Owner
                 </button>
               </div>
             </div>
@@ -316,6 +351,41 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
                 </button>
               </div>
             </div>
+
+            {/* Admin Role */}
+            <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-transparent hover:border-red-500 cursor-pointer transition-all"
+                 onClick={() => handleRoleSelection('admin')}>
+              <div className="text-center">
+                <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-red-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Platform Admin</h3>
+                <p className="text-gray-600 mb-6">Manage users, oversee platform, track revenue</p>
+                
+                <div className="space-y-2 text-sm text-gray-700 mb-6">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>User management & verification</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Revenue & analytics dashboard</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Campaign oversight</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>•</span>
+                    <span>Platform health monitoring</span>
+                  </div>
+                </div>
+
+                <button className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700">
+                  Continue as Admin
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="text-center mt-8">
@@ -342,9 +412,16 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
                 <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                   userRole === 'agency' 
                     ? 'bg-blue-100 text-blue-700' 
-                    : 'bg-purple-100 text-purple-700'
+                    : userRole === 'creator'
+                    ? 'bg-purple-100 text-purple-700'
+                    : userRole === 'admin'
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-green-100 text-green-700'
                 }`}>
-                  {userRole === 'agency' ? 'Agency' : 'Creator'}
+                  {userRole === 'agency' ? 'Agency' : 
+                   userRole === 'creator' ? 'Creator' : 
+                   userRole === 'admin' ? 'Admin' : 
+                   'Rewards Owner'}
                 </div>
               </div>
               

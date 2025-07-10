@@ -1,88 +1,93 @@
-// ClippIntell Bot Detection MVP - Core Types
-
 export type Platform = 'instagram' | 'tiktok' | 'youtube' | 'twitter';
-
-export type BotRiskLevel = 'low' | 'medium' | 'high';
 
 export interface SocialAccount {
   handle: string;
   platform: Platform;
-  url?: string;
-}
-
-export interface BotSignals {
-  followerQuality: 'normal' | 'suspicious' | 'fake';
-  engagementPattern: 'organic' | 'automated' | 'suspicious';
-  contentConsistency: 'good' | 'poor' | 'inconsistent';
-  accountAge: 'established' | 'recent' | 'very_new';
-  profileCompleteness: 'complete' | 'incomplete' | 'minimal';
-  locationConsistency?: 'consistent' | 'inconsistent';
-  verificationStatus?: 'verified' | 'unverified';
-  networkAnalysis?: 'normal' | 'suspicious' | 'bot_cluster';
 }
 
 export interface AccountMetrics {
   followers: number;
   following: number;
   posts: number;
-  avgLikes: number;
-  avgComments: number;
-  avgViews?: number;
   engagementRate: number;
-  followerToFollowingRatio: number;
+  averageLikes: number;
+  averageComments: number;
+  accountAge: number; // days since account creation
+  profileCompleteness: number; // 0-100%
+  postFrequency: number; // posts per day
+  lastActivity: number; // days since last post
+}
+
+export interface BotSignals {
+  followersGrowthPattern: 'organic' | 'suspicious' | 'artificial';
+  engagementPattern: 'normal' | 'automated' | 'suspicious';
+  profileQuality: 'complete' | 'incomplete' | 'fake';
+  contentQuality: 'good' | 'poor' | 'spam';
+  accountAge: 'established' | 'recent' | 'brand_new';
+  followingPattern: 'normal' | 'suspicious' | 'bot_like';
+  activityPattern: 'consistent' | 'irregular' | 'bot_like';
+  networkConnections: 'legitimate' | 'suspicious' | 'bot_network';
 }
 
 export interface BotAnalysisResult {
-  id: string;
   account: SocialAccount;
-  botScore: number; // 0-100
-  riskLevel: BotRiskLevel;
-  signals: BotSignals;
+  botScore: number; // 0-100, higher = more likely bot
+  riskLevel: 'low' | 'medium' | 'high';
+  confidence: number; // 0-100
   metrics: AccountMetrics;
+  signals: BotSignals;
   redFlags: string[];
   recommendations: string[];
-  confidence: number; // 0-100
-  analysisDate: string;
   processingTime: number; // seconds
+  timestamp: Date;
+  geminiApiUsed: boolean;
+  keyIndex: number; // which API key was used
 }
 
-export interface Campaign {
-  id: string;
-  name: string;
-  description: string;
-  userId: string;
-  createdAt: string;
-  totalAnalyses: number;
-  highRiskAccounts: number;
-  averageBotScore: number;
+export interface GeminiApiKey {
+  key: string;
+  index: number;
+  lastUsed: Date;
+  requestCount: number;
+  isActive: boolean;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  subscriptionTier: 'free' | 'campaign_protection' | 'enterprise' | 'api_access';
-  monthlyAnalysisLimit: number;
-  analysisCount: number;
-  createdAt: string;
+export interface ApiKeyManager {
+  getNextAvailableKey(): GeminiApiKey | null;
+  markKeyUsed(keyIndex: number): void;
+  getKeyStats(): {
+    totalKeys: number;
+    activeKeys: number;
+    totalRequests: number;
+  };
 }
 
-export interface AnalysisRequest {
-  accounts: SocialAccount[];
-  campaignId?: string;
-  priority: 'low' | 'normal' | 'high';
+export interface SocialMediaProfile {
+  handle: string;
+  displayName: string;
+  bio: string;
+  profileImageUrl: string;
+  isVerified: boolean;
+  followers: number;
+  following: number;
+  posts: number;
+  accountCreated: Date;
+  lastPost: Date;
+  recentPosts: {
+    id: string;
+    content: string;
+    likes: number;
+    comments: number;
+    shares: number;
+    timestamp: Date;
+  }[];
 }
 
-export interface BulkAnalysisProgress {
-  total: number;
-  completed: number;
-  failed: number;
-  inProgress: number;
-  estimatedTimeRemaining: number; // seconds
-}
-
-export interface APIResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  timestamp: string;
+export interface BotDetectionConfig {
+  useGeminiAI: boolean;
+  fallbackToRules: boolean;
+  maxRetries: number;
+  timeoutMs: number;
+  enableParallelAnalysis: boolean;
+  minConfidenceThreshold: number;
 }
