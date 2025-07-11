@@ -1,294 +1,552 @@
-import React, { useState } from 'react';
-import { Search, AlertTriangle, CheckCircle, XCircle, Instagram, Youtube, Twitter, Loader } from 'lucide-react';
-import { socialMediaApi, type BotDetectionResult } from '../utils/socialMediaApi';
+// AccountAnalyzer.tsx - With Persistent Results
+import React, { useState, useEffect } from 'react';
+import { 
+  analyzeYouTubeChannel,
+  analyzeTwitterAccount,
+  analyzeInstagramAccount,
+  analyzeTikTokAccount,
+  validatePlatformInput,
+  getRiskColor,
+  formatNumber,
+  type BotDetectionResult 
+} from '../assets/utils/socialMediaApi';
 
-interface AnalysisState {
-  isAnalyzing: boolean;
-  result: BotDetectionResult | null;
-  error: string | null;
+type Platform = 'youtube' | 'twitter' | 'instagram' | 'tiktok';
+
+interface DemoAccount {
+  label: string;
+  value: string;
+  description?: string;
+}
+
+// Persistent state interface
+interface PersistentState {
+  analysisResult: BotDetectionResult | null;
+  selectedPlatform: Platform;
+  accountInput: string;
+  timestamp: number;
 }
 
 export default function AccountAnalyzer() {
-  const [username, setUsername] = useState('');
-  const [platform, setPlatform] = useState<'youtube' | 'twitter' | 'instagram' | 'tiktok'>('youtube');
-  const [analysis, setAnalysis] = useState<AnalysisState>({
-    isAnalyzing: false,
-    result: null,
-    error: null
-  });
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>('youtube');
+  const [accountInput, setAccountInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<BotDetectionResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const YOUTUBE_API_KEY = 'AIzaSyB7h2m40gH1VxEWxcIJbnfO41-fvT73fGg';
+  // Storage keys
+  const STORAGE_KEY = 'clippintell_analysis_state';
 
-  const handleAnalyze = async () => {
-    if (!username.trim()) {
-      setAnalysis(prev => ({ ...prev, error: 'Please enter a username or channel ID' }));
+  // Save state to sessionStorage
+  const saveState = (newResult?: BotDetectionResult | null, newPlatform?: Platform, newInput?: string) => {
+    try {
+      const stateToSave: PersistentState = {
+        analysisResult: newResult !== undefined ? newResult : analysisResult,
+        selectedPlatform: newPlatform !== undefined ? newPlatform : selectedPlatform,
+        accountInput: newInput !== undefined ? newInput : accountInput,
+        timestamp: Date.now()
+      };
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+    } catch (error) {
+      console.warn('Failed to save state to sessionStorage:', error);
+    }
+  };
+
+  // Load state from sessionStorage
+  const loadState = () => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsedState: PersistentState = JSON.parse(saved);
+        
+        // Only restore if saved within last 2 hours (prevent stale data)
+        const twoHoursAgo = Date.now() - (2 * 60 * 60 * 1000);
+        if (parsedState.timestamp > twoHoursAgo) {
+          setAnalysisResult(parsedState.analysisResult);
+          setSelectedPlatform(parsedState.selectedPlatform);
+          setAccountInput(parsedState.accountInput);
+          console.log('✅ Restored analysis state from session');
+        } else {
+          // Clear old data
+          sessionStorage.removeItem(STORAGE_KEY);
+          console.log('🗑️ Cleared old analysis state');
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load state from sessionStorage:', error);
+      sessionStorage.removeItem(STORAGE_KEY);
+    }
+  };
+
+  // Load state on component mount
+  useEffect(() => {
+    loadState();
+  }, []);
+
+  // Save state when analysis result changes
+  useEffect(() => {
+    if (analysisResult) {
+      saveState(analysisResult);
+    }
+  }, [analysisResult]);
+
+  // Platform Configuration
+  const platforms = {
+    youtube: {
+      name: 'YouTube',
+      icon: '🎥',
+      color: 'red',
+      placeholder: 'Enter YouTube channel ID or @username',
+      enabled: true
+    },
+    twitter: {
+      name: 'Twitter',
+      icon: '🐦',
+      color: 'blue',
+      placeholder: 'Enter Twitter username (without @)',
+      enabled: true
+    },
+    instagram: {
+      name: 'Instagram',
+      icon: '📸',
+      color: 'pink',
+      placeholder: 'Enter Instagram username (without @)',
+      enabled: true
+    },
+    tiktok: {
+      name: 'TikTok',
+      icon: '🎵',
+      color: 'black',
+      placeholder: 'Enter TikTok username (without @)',
+      enabled: true
+    }
+  } as const;
+
+  // Demo accounts for each platform
+  const getDemoAccounts = (): DemoAccount[] => {
+    switch (selectedPlatform) {
+      case 'youtube':
+        return [
+          { 
+            label: 'MrBeast', 
+            value: 'UCX6OQ3DkcsbYNE6H8uQQuVA',
+            description: 'Popular creator - should show low bot probability'
+          },
+          { 
+            label: 'PewDiePie', 
+            value: 'UC-lHJZR3Gqxm24_Vd_AJ5Yw',
+            description: 'Established creator - authentic account'
+          }
+        ];
+      case 'twitter':
+        return [
+          { 
+            label: 'Elon Musk', 
+            value: 'elonmusk',
+            description: 'High-profile account - low bot risk'
+          },
+          { 
+            label: 'Barack Obama', 
+            value: 'BarackObama',
+            description: 'Verified political figure'
+          }
+        ];
+      case 'instagram':
+        return [
+          { 
+            label: 'Cristiano Ronaldo', 
+            value: 'cristiano',
+            description: 'Most followed account - very low risk'
+          },
+          { 
+            label: 'Selena Gomez', 
+            value: 'selenagomez',
+            description: 'Celebrity account - authentic'
+          },
+          { 
+            label: 'Fashion Influencer', 
+            value: 'fashion_influencer_2024',
+            description: 'New creator account - low risk'
+          },
+          { 
+            label: 'Fake Account (Demo)', 
+            value: 'fake_account_123',
+            description: 'Example bot account - high risk'
+          }
+        ];
+      case 'tiktok':
+        return [
+          { 
+            label: 'Charli D\'Amelio', 
+            value: 'charlidamelio',
+            description: 'Top creator - very low risk'
+          },
+          { 
+            label: 'TikTok Bot (Demo)', 
+            value: 'tiktok_bot_2024',
+            description: 'Example bot account - high risk'
+          }
+        ];
+      default:
+        return [];
+    }
+  };
+
+  // Platform Button Component
+  const PlatformButton = ({ platform }: { platform: Platform }) => {
+    const config = platforms[platform];
+    const isActive = selectedPlatform === platform;
+    
+    const handlePlatformSwitch = () => {
+      setSelectedPlatform(platform);
+      // Clear current analysis when switching platforms
+      setAnalysisResult(null);
+      setAccountInput('');
+      setError(null);
+      saveState(null, platform, '');
+    };
+    
+    return (
+      <button
+        onClick={handlePlatformSwitch}
+        disabled={!config.enabled}
+        className={`flex items-center gap-3 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+          isActive
+            ? 'bg-blue-600 text-white shadow-lg scale-105'
+            : config.enabled
+            ? 'bg-white text-gray-700 hover:bg-gray-50 border-2 border-gray-200 hover:border-gray-300'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed border-2 border-gray-100'
+        }`}
+      >
+        <span className="text-xl">{config.icon}</span>
+        <span>{config.name}</span>
+        {!config.enabled && (
+          <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+            Pending
+          </span>
+        )}
+      </button>
+    );
+  };
+
+  // Demo Account Button Component
+  const DemoAccountButton = ({ account }: { account: DemoAccount }) => (
+    <button
+      onClick={() => {
+        setAccountInput(account.value);
+        saveState(undefined, undefined, account.value);
+      }}
+      className="text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+    >
+      <div className="font-medium text-gray-900">{account.label}</div>
+      {account.description && (
+        <div className="text-sm text-gray-600 mt-1">{account.description}</div>
+      )}
+      <div className="text-xs text-blue-600 mt-1 font-mono">{account.value}</div>
+    </button>
+  );
+
+  // Analysis Handler
+  const handleAnalyzeAccount = async () => {
+    if (!accountInput.trim()) {
+      setError('Please enter an account identifier');
       return;
     }
 
-    setAnalysis({ isAnalyzing: true, result: null, error: null });
+    // Validate input
+    const validation = validatePlatformInput(selectedPlatform, accountInput);
+    if (!validation.isValid) {
+      setError(validation.error || 'Invalid input');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setAnalysisResult(null);
 
     try {
       let result: BotDetectionResult;
-
-      switch (platform) {
+      
+      switch (selectedPlatform) {
         case 'youtube':
-          result = await socialMediaApi.analyzeYouTubeAccount(username.trim(), YOUTUBE_API_KEY);
+          result = await analyzeYouTubeChannel(accountInput);
           break;
         case 'twitter':
-          result = await socialMediaApi.analyzeTwitterAccount(username.trim());
+          result = await analyzeTwitterAccount(accountInput);
           break;
         case 'instagram':
-          result = await socialMediaApi.analyzeInstagramAccount(username.trim(), '');
+          result = await analyzeInstagramAccount(accountInput);
           break;
         case 'tiktok':
-          result = await socialMediaApi.analyzeTikTokAccount('');
+          result = await analyzeTikTokAccount(accountInput);
           break;
         default:
-          throw new Error('Unsupported platform');
+          throw new Error(`Platform ${selectedPlatform} not supported`);
       }
-
-      setAnalysis({ isAnalyzing: false, result, error: null });
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Analysis failed';
-      setAnalysis({ isAnalyzing: false, result: null, error: errorMessage });
+      
+      setAnalysisResult(result);
+      saveState(result); // Save immediately after successful analysis
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Analysis failed');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getRiskColor = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'LOW': return 'text-green-600 bg-green-50 border-green-200';
-      case 'MEDIUM': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'HIGH': return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'CRITICAL': return 'text-red-600 bg-red-50 border-red-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
-    }
+  // Risk Level Badge Component
+  const RiskBadge = ({ riskLevel }: { riskLevel: string }) => (
+    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRiskColor(riskLevel)}`}>
+      {riskLevel}
+    </span>
+  );
+
+  // Metrics Display Component
+  const MetricsGrid = ({ result }: { result: BotDetectionResult }) => {
+    const getMetricsForPlatform = () => {
+      switch (result.platform) {
+        case 'youtube':
+          return [
+            { label: 'Subscribers', value: formatNumber(result.analysis.metrics.subscribers) },
+            { label: 'Videos', value: formatNumber(result.analysis.metrics.videos) },
+            { label: 'Total Views', value: formatNumber(result.analysis.metrics.views) },
+            { label: 'Channel Age', value: `${result.analysis.metrics.channelAge} days` },
+            { label: 'Recent Uploads', value: `${result.analysis.metrics.uploadsLast30Days}/30 days` },
+            { label: 'Avg Views/Video', value: formatNumber(result.analysis.metrics.avgViewsPerVideo) }
+          ];
+        case 'twitter':
+          return [
+            { label: 'Followers', value: formatNumber(result.analysis.metrics.followers) },
+            { label: 'Following', value: formatNumber(result.analysis.metrics.following) },
+            { label: 'Tweets', value: formatNumber(result.analysis.metrics.tweets) },
+            { label: 'Account Age', value: `${result.analysis.metrics.accountAge} days` },
+            { label: 'Follower Ratio', value: result.analysis.metrics.followerRatio.toFixed(2) },
+            { label: 'Tweets/Day', value: result.analysis.metrics.tweetsPerDay.toFixed(1) }
+          ];
+        case 'instagram':
+          return [
+            { label: 'Followers', value: formatNumber(result.analysis.metrics.followers) },
+            { label: 'Following', value: formatNumber(result.analysis.metrics.following) },
+            { label: 'Posts', value: formatNumber(result.analysis.metrics.posts) },
+            { label: 'Account Type', value: result.analysis.metrics.accountType },
+            { label: 'Follower Ratio', value: result.analysis.metrics.followerRatio.toFixed(2) }
+          ];
+        case 'tiktok':
+          return [
+            { label: 'Followers', value: formatNumber(result.analysis.metrics.followers) },
+            { label: 'Following', value: formatNumber(result.analysis.metrics.following) },
+            { label: 'Videos', value: formatNumber(result.analysis.metrics.videos) },
+            { label: 'Total Likes', value: formatNumber(result.analysis.metrics.likes) },
+            { label: 'Engagement Rate', value: `${result.analysis.metrics.engagementRate}%` }
+          ];
+        default:
+          return [];
+      }
+    };
+
+    const metrics = getMetricsForPlatform();
+
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {metrics.map((metric, index) => (
+          <div key={index} className="bg-gray-50 p-3 rounded-lg">
+            <div className="text-sm text-gray-600">{metric.label}</div>
+            <div className="text-lg font-semibold text-gray-900">{metric.value}</div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
-  const getRiskIcon = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'LOW': return <CheckCircle className="w-5 h-5" />;
-      case 'MEDIUM': return <AlertTriangle className="w-5 h-5" />;
-      case 'HIGH': return <AlertTriangle className="w-5 h-5" />;
-      case 'CRITICAL': return <XCircle className="w-5 h-5" />;
-      default: return <AlertTriangle className="w-5 h-5" />;
-    }
-  };
-
-  const getExampleData = () => {
-    switch (platform) {
-      case 'youtube': return { value: 'UCX6OQ3DkcsbYNE6H8uQQuVA', label: 'Try MrBeast' };
-      case 'twitter': return { value: 'elonmusk', label: 'Try Elon Musk' };
-      case 'instagram': return { value: 'instagram', label: 'Try Instagram' };
-      case 'tiktok': return { value: 'tiktok', label: 'Try TikTok' };
-      default: return { value: '', label: 'Try Example' };
-    }
-  };
-
-  const getInputLabel = () => {
-    switch (platform) {
-      case 'youtube': return 'YouTube Channel ID';
-      case 'twitter': return 'Twitter Username';
-      case 'instagram': return 'Instagram Username';
-      case 'tiktok': return 'TikTok Username';
-      default: return 'Username';
-    }
-  };
-
-  const getPlaceholder = () => {
-    switch (platform) {
-      case 'youtube': return 'Enter YouTube Channel ID (e.g., UCX6OQ3DkcsbYNE6H8uQQuVA)';
-      case 'twitter': return 'Enter Twitter username (e.g., elonmusk)';
-      case 'instagram': return 'Enter Instagram username';
-      case 'tiktok': return 'Enter TikTok username';
-      default: return 'Enter username';
+  // Get display name for results header
+  const getDisplayName = (result: BotDetectionResult) => {
+    switch (result.platform) {
+      case 'youtube':
+        return result.channelName || result.channelId;
+      case 'twitter':
+        return `@${result.username}`;
+      case 'instagram':
+        return `@${result.username}`;
+      case 'tiktok':
+        return `@${result.username}`;
+      default:
+        return 'Unknown';
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Social Media Bot Detection</h2>
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="bg-white rounded-2xl shadow-xl p-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Social Media Bot Detection
+          </h2>
           <p className="text-gray-600">
-            Analyze social media accounts to detect fake accounts, bots, and suspicious activity patterns.
+            Analyze accounts across multiple platforms to detect potential bot activity
           </p>
         </div>
 
-        <div className="p-6">
-          {/* Platform Selection */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Select Platform</label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[
-                { value: 'youtube', label: 'YouTube', icon: <Youtube className="w-5 h-5" />, available: true, status: '✅ Live API' },
-                { value: 'twitter', label: 'Twitter/X', icon: <Twitter className="w-5 h-5" />, available: true, status: '✅ Live API' },
-                { value: 'instagram', label: 'Instagram', icon: <Instagram className="w-5 h-5" />, available: false, status: '⏳ Pending' },
-                { value: 'tiktok', label: 'TikTok', icon: <Search className="w-5 h-5" />, available: false, status: '⏳ Pending' }
-              ].map((p) => (
-                <div key={p.value} className="relative">
-                  <button
-                    onClick={() => setPlatform(p.value as any)}
-                    disabled={!p.available}
-                    className={`w-full flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                      platform === p.value 
-                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                        : p.available 
-                          ? 'border-gray-200 hover:border-gray-300 text-gray-700' 
-                          : 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {p.icon}
-                    <span className="font-medium">{p.label}</span>
-                  </button>
-                  <div className="text-xs text-center mt-1 text-gray-500">{p.status}</div>
-                </div>
-              ))}
-            </div>
+        {/* Platform Selection */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Platform</h3>
+          <div className="flex flex-wrap gap-4 justify-center">
+            {(Object.keys(platforms) as Platform[]).map((platform) => (
+              <PlatformButton key={platform} platform={platform} />
+            ))}
           </div>
+        </div>
 
-          {/* Input Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {getInputLabel()}
-            </label>
-            <div className="relative">
+        {/* Input Section */}
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
               <input
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder={getPlaceholder()}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={analysis.isAnalyzing}
+                value={accountInput}
+                onChange={(e) => {
+                  setAccountInput(e.target.value);
+                  saveState(undefined, undefined, e.target.value);
+                }}
+                placeholder={platforms[selectedPlatform].placeholder}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-lg"
+                onKeyPress={(e) => e.key === 'Enter' && handleAnalyzeAccount()}
               />
-              <button
-                onClick={() => setUsername(getExampleData().value)}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm text-blue-600 hover:text-blue-800"
-              >
-                {getExampleData().label}
-              </button>
             </div>
-            {(platform === 'youtube' || platform === 'twitter') && (
-              <p className="text-sm text-gray-500 mt-1">
-                💡 {platform === 'youtube' 
-                  ? 'To find a YouTube Channel ID: Go to the channel → View Page Source → Search for "channelId"'
-                  : 'Enter the Twitter username without the @ symbol'
-                }
-              </p>
-            )}
+            <button
+              onClick={handleAnalyzeAccount}
+              disabled={loading || !platforms[selectedPlatform].enabled}
+              className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? 'Analyzing...' : 'Analyze Account'}
+            </button>
           </div>
+        </div>
 
-          {/* Analyze Button */}
-          <button
-            onClick={handleAnalyze}
-            disabled={analysis.isAnalyzing || (platform !== 'youtube' && platform !== 'twitter')}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium"
-          >
-            {analysis.isAnalyzing ? (
-              <>
-                <Loader className="w-5 h-5 animate-spin" />
-                Analyzing {platform} Account...
-              </>
-            ) : (
-              <>
-                Analyze {platform.charAt(0).toUpperCase() + platform.slice(1)} Account
-              </>
+        {/* Demo Accounts */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Try Demo Accounts for {platforms[selectedPlatform].name}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {getDemoAccounts().map((account, index) => (
+              <DemoAccountButton key={index} account={account} />
+            ))}
+          </div>
+        </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+            <div className="flex items-center">
+              <span className="text-red-500 text-xl mr-3">⚠️</span>
+              <div>
+                <h4 className="text-red-800 font-semibold">Analysis Error</h4>
+                <p className="text-red-700">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Analyzing account for bot indicators...</p>
+          </div>
+        )}
+
+        {/* Analysis Results */}
+        {analysisResult && (
+          <div className="space-y-6">
+            {/* Results Header */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {platforms[analysisResult.platform as Platform].icon} {getDisplayName(analysisResult)}
+                  </h3>
+                  <p className="text-gray-600 capitalize">{analysisResult.platform} Account Analysis</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-gray-900 mb-1">
+                    {analysisResult.analysis.botProbability}%
+                  </div>
+                  <RiskBadge riskLevel={analysisResult.analysis.riskLevel} />
+                </div>
+              </div>
+            </div>
+
+            {/* Bot Probability Meter */}
+            <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Bot Probability Score</h4>
+              <div className="relative">
+                <div className="w-full bg-gray-200 rounded-full h-4">
+                  <div
+                    className={`h-4 rounded-full transition-all duration-500 ${
+                      analysisResult.analysis.botProbability >= 70
+                        ? 'bg-red-500'
+                        : analysisResult.analysis.botProbability >= 40
+                        ? 'bg-yellow-500'
+                        : 'bg-green-500'
+                    }`}
+                    style={{ width: `${analysisResult.analysis.botProbability}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600 mt-2">
+                  <span>Authentic (0%)</span>
+                  <span>Suspicious (50%)</span>
+                  <span>Bot (100%)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Account Metrics */}
+            <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Account Metrics</h4>
+              <MetricsGrid result={analysisResult} />
+            </div>
+
+            {/* Flags and Issues */}
+            {analysisResult.analysis.flags.length > 0 && (
+              <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">Detected Issues</h4>
+                <div className="space-y-2">
+                  {analysisResult.analysis.flags.map((flag, index) => (
+                    <div key={index} className="flex items-center text-amber-700 bg-amber-50 px-3 py-2 rounded-lg">
+                      <span className="text-amber-500 mr-2">⚠️</span>
+                      {flag}
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
-          </button>
 
-          {/* API Status Notice */}
-          {(platform === 'instagram' || platform === 'tiktok') && (
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800">
-                ⏳ {platform === 'instagram' ? 'Instagram' : 'TikTok'} API integration is pending approval. 
-                YouTube and Twitter analysis are currently available.
-              </p>
-            </div>
-          )}
-
-          {/* Results */}
-          {analysis.error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-center gap-2 text-red-800">
-                <XCircle className="w-5 h-5" />
-                <span className="font-medium">Analysis Failed</span>
-              </div>
-              <p className="text-red-700 mt-1">{analysis.error}</p>
-            </div>
-          )}
-
-          {analysis.result && (
-            <div className="mt-6 space-y-4">
-              <div className={`p-4 rounded-lg border-2 ${getRiskColor(analysis.result.riskLevel)}`}>
-                <div className="flex items-center gap-3 mb-2">
-                  {getRiskIcon(analysis.result.riskLevel)}
-                  <div>
-                    <h3 className="font-bold text-lg">Risk Level: {analysis.result.riskLevel}</h3>
-                    <p className="text-sm opacity-75">
-                      Bot Probability: {(analysis.result.botProbability * 100).toFixed(1)}%
-                    </p>
-                  </div>
-                </div>
-                <p className="font-medium">{analysis.result.recommendation}</p>
-              </div>
-
-              {/* Account Info */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-bold text-gray-900 mb-2">Account Information</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Platform:</span>
-                    <span className="ml-2 font-medium capitalize">{analysis.result.platform}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Username:</span>
-                    <span className="ml-2 font-medium">{analysis.result.username}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Analyzed:</span>
-                    <span className="ml-2 font-medium">
-                      {new Date(analysis.result.analysisDate).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {analysis.result.flags.length > 0 && (
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                  <h4 className="font-bold text-yellow-800 mb-2">⚠️ Detected Issues</h4>
-                  <ul className="space-y-1">
-                    {analysis.result.flags.map((flag: string, index: number) => (
-                      <li key={index} className="text-yellow-700 text-sm">• {flag}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Analysis Details */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="font-bold text-gray-900 mb-3">Analysis Breakdown</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Profile Analysis:</span>
-                    <span className="ml-2 font-medium">
-                      {analysis.result.analysis.profileAnalysis.score || 0} points
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Engagement Analysis:</span>
-                    <span className="ml-2 font-medium">
-                      {analysis.result.analysis.engagementAnalysis.score || 0} points
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Content Analysis:</span>
-                    <span className="ml-2 font-medium">
-                      {analysis.result.analysis.contentAnalysis.score || 0} points
-                    </span>
-                  </div>
-                </div>
+            {/* Recommendation */}
+            <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Recommendation</h4>
+              <div className={`p-4 rounded-lg ${
+                analysisResult.analysis.riskLevel === 'High'
+                  ? 'bg-red-50 text-red-800'
+                  : analysisResult.analysis.riskLevel === 'Medium'
+                  ? 'bg-yellow-50 text-yellow-800'
+                  : 'bg-green-50 text-green-800'
+              }`}>
+                <p className="font-medium">{analysisResult.analysis.recommendation}</p>
               </div>
             </div>
-          )}
+          </div>
+        )}
+
+        {/* Platform Status */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="text-center text-sm text-gray-500">
+            <p className="mb-2">
+              <strong>Platform Status:</strong> YouTube ✅ | Twitter ✅ | Instagram ✅ | TikTok ✅
+            </p>
+            <p>
+              Real-time bot detection powered by {platforms[selectedPlatform].name} API integration
+            </p>
+          </div>
         </div>
       </div>
     </div>

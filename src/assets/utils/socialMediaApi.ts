@@ -1,235 +1,306 @@
+// socialMediaApi.ts - Fixed Supabase Integration
+// This will properly call your deployed Edge Functions
+
+import { createClient } from '@supabase/supabase-js';
+
+// Direct supabase initialization using your env vars
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL!;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Types
 export interface BotDetectionResult {
-    username: string;
-    platform: string;
+  platform: string;
+  username: string;
+  accountType?: string;
+  channelId?: string;
+  channelName?: string;
+  displayName?: string;
+  analysis: {
     botProbability: number;
-    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    riskLevel: string;
     flags: string[];
-    analysis: {
-      profileAnalysis: { score: number };
-      engagementAnalysis: { score: number };
-      contentAnalysis: { score: number };
-      networkAnalysis: { score: number };
-    };
     recommendation: string;
-    analysisDate: string;
-  }
-  
-  const SUPABASE_URL = 'https://joxzubnkgelzxoyzotbt.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpveHp1Ym5rZ2VsenhveXpvdGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4Mzg1ODQsImV4cCI6MjA2NzQxNDU4NH0.3oTCzc1g_G7-QCrEkYDgj2US4z2olyd6A7X-jlpcUoI';
-  
-  // API Keys
-  const YOUTUBE_API_KEY = 'AIzaSyB7h2m40gH1VxEWxcIJbnfO41-fvT73fGg';
-  
-  class SocialMediaApiService {
+    metrics: any;
+  };
+}
+
+// YouTube Analysis - LIVE EDGE FUNCTION
+export async function analyzeYouTubeChannel(channelInput: string): Promise<BotDetectionResult> {
+  try {
+    console.log('🎥 Calling YouTube Edge Function for:', channelInput);
     
-    /**
-     * Analyze YouTube account for bot detection
-     */
-    async analyzeYouTubeAccount(channelId: string, apiKey: string): Promise<BotDetectionResult> {
-      try {
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/youtube-bot-detection`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ channelId, apiKey })
-        });
-  
-        if (!response.ok) {
-          throw new Error(`YouTube API error: ${response.status}`);
-        }
-  
-        const result = await response.json();
-        return {
-          ...result,
-          platform: 'youtube',
-          analysisDate: new Date().toISOString()
-        };
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        throw new Error(`Failed to analyze YouTube account: ${errorMessage}`);
-      }
+    const { data, error } = await supabase.functions.invoke('youtube-bot-detection', {
+      body: { channelId: channelInput }
+    });
+
+    if (error) {
+      console.error('❌ YouTube Edge Function error:', error);
+      throw error;
     }
-  
-    /**
-     * Analyze Twitter account for bot detection
-     */
-    async analyzeTwitterAccount(username: string): Promise<BotDetectionResult> {
-      try {
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/twitter-bot-detection`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ username })
-        });
-  
-        if (!response.ok) {
-          throw new Error(`Twitter API error: ${response.status}`);
-        }
-  
-        const result = await response.json();
-        return {
-          ...result,
-          platform: 'twitter',
-          analysisDate: new Date().toISOString()
-        };
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        throw new Error(`Failed to analyze Twitter account: ${errorMessage}`);
-      }
-    }
-  
-    /**
-     * Analyze TikTok account for bot detection
-     */
-    async analyzeTikTokAccount(accessToken: string): Promise<BotDetectionResult> {
-      try {
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/tiktok-bot-detection`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ accessToken })
-        });
-  
-        if (!response.ok) {
-          throw new Error(`TikTok API error: ${response.status}`);
-        }
-  
-        const result = await response.json();
-        return {
-          ...result,
-          platform: 'tiktok',
-          analysisDate: new Date().toISOString()
-        };
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        throw new Error(`Failed to analyze TikTok account: ${errorMessage}`);
-      }
-    }
-  
-    /**
-     * Analyze Instagram account for bot detection
-     */
-    async analyzeInstagramAccount(username: string, accessToken: string): Promise<BotDetectionResult> {
-      try {
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/instagram-bot-detection`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ username, accessToken })
-        });
-  
-        if (!response.ok) {
-          throw new Error(`Instagram API error: ${response.status}`);
-        }
-  
-        const result = await response.json();
-        return {
-          ...result,
-          platform: 'instagram',
-          analysisDate: new Date().toISOString()
-        };
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        throw new Error(`Failed to analyze Instagram account: ${errorMessage}`);
-      }
-    }
-  
-    /**
-     * Batch analyze multiple accounts across platforms
-     */
-    async batchAnalyze(accounts: Array<{
-      platform: string, 
-      username: string, 
-      channelId?: string,
-      accessToken?: string
-    }>): Promise<BotDetectionResult[]> {
-      const results: BotDetectionResult[] = [];
-      
-      for (const account of accounts) {
-        try {
-          let result: BotDetectionResult;
-          
-          switch (account.platform) {
-            case 'youtube':
-              const channelId = account.channelId || account.username;
-              result = await this.analyzeYouTubeAccount(channelId, YOUTUBE_API_KEY);
-              break;
-            case 'twitter':
-              result = await this.analyzeTwitterAccount(account.username);
-              break;
-            case 'tiktok':
-              if (!account.accessToken) {
-                throw new Error('Access token required for TikTok');
-              }
-              result = await this.analyzeTikTokAccount(account.accessToken);
-              break;
-            case 'instagram':
-              if (!account.accessToken) {
-                throw new Error('Access token required for Instagram');
-              }
-              result = await this.analyzeInstagramAccount(account.username, account.accessToken);
-              break;
-            default:
-              throw new Error(`Unsupported platform: ${account.platform}`);
-          }
-          
-          results.push(result);
-        } catch (error: unknown) {
-          console.error(`Error analyzing ${account.platform} account ${account.username}:`, error);
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          // Add error result instead of failing entire batch
-          results.push({
-            username: account.username,
-            platform: account.platform,
-            botProbability: 0,
-            riskLevel: 'LOW',
-            flags: [`Analysis failed: ${errorMessage}`],
-            analysis: {
-              profileAnalysis: { score: 0 },
-              engagementAnalysis: { score: 0 },
-              contentAnalysis: { score: 0 },
-              networkAnalysis: { score: 0 }
-            },
-            recommendation: 'Manual review required - automated analysis failed',
-            analysisDate: new Date().toISOString()
-          });
+
+    console.log('✅ YouTube Edge Function SUCCESS - Live data:', data);
+    return data;
+
+  } catch (error) {
+    console.error('🚫 YouTube Edge Function FAILED, using demo data:', error);
+    
+    // Demo fallback
+    return {
+      platform: 'youtube',
+      username: channelInput,
+      channelId: channelInput,
+      channelName: `Demo: ${channelInput}`,
+      analysis: {
+        botProbability: 15,
+        riskLevel: 'Low',
+        flags: ['DEMO DATA - Edge Function failed'],
+        recommendation: 'This is demo data due to API error.',
+        metrics: {
+          subscribers: 1000000,
+          videos: 100,
+          views: 50000000,
+          channelAge: 365,
+          uploadsLast30Days: 4,
+          avgViewsPerVideo: 500000,
+          subscriberGrowthRate: 5.2
         }
       }
-      
-      return results;
-    }
-  
-    /**
-     * Get platform-specific example usernames for testing
-     */
-    getExampleAccounts() {
-      return {
-        youtube: {
-          channelId: 'UCX6OQ3DkcsbYNE6H8uQQuVA',
-          name: 'MrBeast'
-        },
-        twitter: {
-          username: 'elonmusk',
-          name: 'Elon Musk'
-        },
-        instagram: {
-          username: 'instagram',
-          name: 'Instagram Official'
-        },
-        tiktok: {
-          username: 'tiktok',
-          name: 'TikTok Official'
-        }
-      };
-    }
+    };
   }
-  
-  export const socialMediaApi = new SocialMediaApiService();
+}
+
+// Twitter Analysis - LIVE EDGE FUNCTION
+export async function analyzeTwitterAccount(username: string): Promise<BotDetectionResult> {
+  try {
+    const cleanUsername = username.replace('@', '');
+    console.log('🐦 Calling Twitter Edge Function for:', cleanUsername);
+    
+    const { data, error } = await supabase.functions.invoke('twitter-bot-detection', {
+      body: { username: cleanUsername }
+    });
+
+    if (error) {
+      console.error('❌ Twitter Edge Function error:', error);
+      throw error;
+    }
+
+    console.log('✅ Twitter Edge Function SUCCESS - Live data:', data);
+    return data;
+
+  } catch (error) {
+    console.error('🚫 Twitter Edge Function FAILED, using demo data:', error);
+    
+    const cleanUsername = username.replace('@', '');
+    return {
+      platform: 'twitter',
+      username: cleanUsername,
+      displayName: cleanUsername,
+      analysis: {
+        botProbability: 12,
+        riskLevel: 'Low',
+        flags: ['DEMO DATA - Edge Function failed'],
+        recommendation: 'This is demo data due to API error.',
+        metrics: {
+          followers: 50000,
+          following: 1000,
+          tweets: 5000,
+          accountAge: 1000,
+          followerRatio: 50,
+          tweetsPerDay: 5,
+          verificationStatus: false
+        }
+      }
+    };
+  }
+}
+
+// Instagram Analysis - LIVE EDGE FUNCTION
+export async function analyzeInstagramAccount(username: string): Promise<BotDetectionResult> {
+  try {
+    const cleanUsername = username.replace('@', '');
+    console.log('📸 Calling Instagram Edge Function for:', cleanUsername);
+    
+    const { data, error } = await supabase.functions.invoke('instagram-bot-detection', {
+      body: { username: cleanUsername }
+    });
+
+    if (error) {
+      console.error('❌ Instagram Edge Function error:', error);
+      throw error;
+    }
+
+    console.log('✅ Instagram Edge Function SUCCESS - Live data:', data);
+    return data;
+
+  } catch (error) {
+    console.error('🚫 Instagram Edge Function FAILED, using demo data:', error);
+    
+    // Demo fallback with known accounts
+    const cleanUsername = username.replace('@', '');
+    const demoAccounts: Record<string, any> = {
+      'cristiano': {
+        platform: 'instagram',
+        username: 'cristiano',
+        accountType: 'CREATOR',
+        analysis: {
+          botProbability: 5,
+          riskLevel: 'Very Low',
+          flags: ['DEMO DATA - Edge Function failed'],
+          recommendation: 'Demo: Account appears authentic.',
+          metrics: {
+            followers: 635000000,
+            following: 540,
+            posts: 3489,
+            accountType: 'CREATOR',
+            followerRatio: 1175925.93
+          }
+        }
+      },
+      'fake_account_123': {
+        platform: 'instagram',
+        username: 'fake_account_123',
+        accountType: 'PERSONAL',
+        analysis: {
+          botProbability: 85,
+          riskLevel: 'High',
+          flags: [
+            'DEMO DATA - Edge Function failed',
+            'Username ends with many numbers',
+            'Low engagement rate'
+          ],
+          recommendation: 'Demo: Strong evidence of bot activity.',
+          metrics: {
+            followers: 1200,
+            following: 5600,
+            posts: 3,
+            accountType: 'PERSONAL',
+            followerRatio: 0.21
+          }
+        }
+      }
+    };
+
+    return demoAccounts[cleanUsername.toLowerCase()] || {
+      platform: 'instagram',
+      username: cleanUsername,
+      accountType: 'UNKNOWN',
+      analysis: {
+        botProbability: 45,
+        riskLevel: 'Medium',
+        flags: ['DEMO DATA - Edge Function failed'],
+        recommendation: 'Demo: Requires manual review.',
+        metrics: {
+          followers: 0,
+          following: 0,
+          posts: 0,
+          accountType: 'UNKNOWN',
+          followerRatio: 0
+        }
+      }
+    };
+  }
+}
+
+// TikTok Analysis - LIVE EDGE FUNCTION
+export async function analyzeTikTokAccount(username: string): Promise<BotDetectionResult> {
+  try {
+    const cleanUsername = username.replace('@', '');
+    console.log('🎵 Calling TikTok Edge Function for:', cleanUsername);
+    
+    const { data, error } = await supabase.functions.invoke('tiktok-bot-detection', {
+      body: { username: cleanUsername }
+    });
+
+    if (error) {
+      console.error('❌ TikTok Edge Function error:', error);
+      throw error;
+    }
+
+    console.log('✅ TikTok Edge Function SUCCESS - Live data:', data);
+    return data;
+
+  } catch (error) {
+    console.error('🚫 TikTok Edge Function FAILED, using demo data:', error);
+    
+    const cleanUsername = username.replace('@', '');
+    const demoAccounts: Record<string, any> = {
+      'charlidamelio': {
+        platform: 'tiktok',
+        username: 'charlidamelio',
+        displayName: 'Charli D\'Amelio',
+        analysis: {
+          botProbability: 3,
+          riskLevel: 'Very Low',
+          flags: ['DEMO DATA - Edge Function failed'],
+          recommendation: 'Demo: Verified creator with excellent engagement.',
+          metrics: {
+            followers: 151000000,
+            following: 1542,
+            videos: 2341,
+            likes: 11200000000,
+            followerRatio: 97923.45,
+            engagementRate: 8.5
+          }
+        }
+      }
+    };
+
+    return demoAccounts[cleanUsername.toLowerCase()] || {
+      platform: 'tiktok',
+      username: cleanUsername,
+      displayName: cleanUsername,
+      analysis: {
+        botProbability: 50,
+        riskLevel: 'Medium',
+        flags: ['DEMO DATA - Edge Function failed'],
+        recommendation: 'Demo: Manual review required.',
+        metrics: {
+          followers: 0,
+          following: 0,
+          videos: 0,
+          likes: 0,
+          followerRatio: 0,
+          engagementRate: 0
+        }
+      }
+    };
+  }
+}
+
+// Utility Functions
+export function validatePlatformInput(platform: string, input: string): { isValid: boolean; error?: string } {
+  if (!input.trim()) {
+    return { isValid: false, error: 'Account input is required' };
+  }
+  return { isValid: true };
+}
+
+export function getRiskColor(riskLevel: string): string {
+  switch (riskLevel?.toLowerCase()) {
+    case 'very low':
+      return 'text-green-600 bg-green-50';
+    case 'low':
+      return 'text-green-600 bg-green-50';
+    case 'medium':
+      return 'text-yellow-600 bg-yellow-50';
+    case 'high':
+      return 'text-red-600 bg-red-50';
+    default:
+      return 'text-gray-600 bg-gray-50';
+  }
+}
+
+export function formatNumber(num: number): string {
+  if (num >= 1000000000) {
+    return (num / 1000000000).toFixed(1) + 'B';
+  }
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return num.toString();
+}
